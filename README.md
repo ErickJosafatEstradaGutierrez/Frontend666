@@ -26,3 +26,56 @@ ng build        # Genera el build de producción
 ng test         # Ejecuta el test de prueba
 
 ```
+
+##  Estructura de carpetas
+
+```plaintext
+.angular/
+.vscode/
+node_modules/
+public/
+src/
+  ├── app/
+  │   ├── pages/
+  │   │   └── auth/
+  │   │       ├── login/
+  │   │       │   ├── login.component.css
+  │   │       │   ├── login.component.html
+  │   │       │   ├── login.component.spec.ts
+  │   │       │   ├── login.component.ts
+  │   │       │   └── README.md
+  │   │       └── register/
+  │   │           ├── register.component.css
+  │   │           ├── register.component.html
+  │   │           ├── register.component.spec.ts
+  │   │           ├── register.component.ts
+  │   │           └── README.md
+  │   ├── consultas/
+  │   ├── consultorio/
+  │   ├── dashboard/
+  │   ├── expediente/
+  │   ├── horarios/
+  │   ├── recetas/
+  │   └── services/
+  ├── app.component.css
+  ├── app.component.html
+  ├── app.component.spec.ts
+  ├── app.component.ts
+  ├── app.config.ts
+  ├── app.config.server.ts
+  ├── app.routes.ts
+  ├── app.routes.server.ts
+  ├── index.html
+  ├── main.ts
+  ├── main.server.ts
+  ├── server.ts
+  └── styles.css
+.editorconfig
+.gitignore
+angular.json
+package.json
+package-lock.json
+README.md
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
