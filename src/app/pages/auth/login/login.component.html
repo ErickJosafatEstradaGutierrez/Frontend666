@@ -1,0 +1,33 @@
+<div class="login-container">
+  <p-card header="Bienvenido a Medireport" subheader="Sistema de gestión médica">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+      <div class="p-field">
+        <label for="correo">Correo</label>
+        <input id="correo" pInputText formControlName="correo" placeholder="correo@empresa.com" />
+      </div>
+
+      <div class="p-field">
+        <label for="password">Contraseña</label>
+        <input id="password" pInputText type="password" formControlName="password" placeholder="••••••••" />
+      </div>
+
+      <div class="p-field">
+        <label for="codigo_totp">Código TOTP</label>
+        <input id="codigo_totp" pInputText formControlName="codigo_totp" placeholder="123456" />
+      </div>
+
+      <div class="p-field">
+        <button pButton type="submit" label="Ingresar" icon="pi pi-sign-in" class="p-button-success w-full" [disabled]="false">
+        Ingresar
+        </button>
+      </div>
+
+      <p-messages [(value)]="mensajesError" severity="error" *ngIf="mensajeError"></p-messages>
+
+      <div class="p-mt-3 text-center">
+        <a routerLink="/register">¿No tienes cuenta? <strong>Regístrate</strong></a>
+      </div>
+    </form>
+  </p-card>
+</div>
