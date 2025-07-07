@@ -1,3 +1,36 @@
-<p>register works!</p>
+<!-- register.component.html -->
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <!--<img src="assets/logo-medico.png" alt="Logo Menchaca" />-->
+      <h2>Crea tu cuenta en <span>*pordeterminar*</span></h2>
+      <p>Sistema de gestión médica</p>
+    </div>
 
-<a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
+      <div class="form-group" *ngFor="let field of campos">
+        <label [for]="field.control">{{ field.label }}</label>
+        <input
+          pInputText
+          [type]="field.type"
+          [id]="field.control"
+          [formControlName]="field.control"
+          [placeholder]="field.placeholder"
+        />
+      </div>
+
+      <button pButton type="submit" label="Registrarse" icon="pi pi-user-plus" class="btn-register" [disabled]="registerForm.invalid"></button>
+
+      <div class="register-link">
+        <a routerLink="/login">¿Ya tienes cuenta? <strong>Inicia sesión</strong></a>
+      </div>
+    </form>
+
+    <!-- Mostrar QR y código secreto si ya se registró -->
+    <div class="qr-section" *ngIf="qrUrl">
+      <h3>Escanea el código con tu app TOTP</h3>
+      <img [src]="qrUrl" alt="Código QR TOTP" />
+      <p><strong>Secreto:</strong> {{ secret }}</p>
+    </div>
+  </div>
+</div>
