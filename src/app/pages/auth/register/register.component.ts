@@ -5,11 +5,13 @@ import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { AuthService } from '../../services/auth.service';
+import { CardModule } from 'primeng/card'; 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, HttpClientModule, InputTextModule, ButtonModule],
+  imports: [ CommonModule, ReactiveFormsModule, RouterModule, HttpClientModule, InputTextModule, ButtonModule, CardModule ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -26,7 +28,7 @@ export class RegisterComponent {
   ];
 
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
       rol: ['', Validators.required],
@@ -40,7 +42,7 @@ export class RegisterComponent {
     this.registerForm.get('rol')?.valueChanges.subscribe((rol) => {
       const especialidad = this.registerForm.get('especialidad');
 
-      if (rol === 'doctor') {
+      if (rol === 'medico') {
         especialidad?.setValidators(Validators.required);
       } else {
         especialidad?.clearValidators();
@@ -54,7 +56,7 @@ export class RegisterComponent {
   onRegister() {
     if (this.registerForm.invalid) return;
 
-    this.http.post<any>('http://localhost:3000/api/register', this.registerForm.value).subscribe({
+    this.authService.register(this.registerForm.value).subscribe({
       next: (resp) => {
         this.secret = resp.secret;
         // Generar QR desde otpauth_url usando api externa de generación
