@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   if (tokenService.isAuthenticated()) {
-    return true; // Permite acceso al dashboard
+    return true; // Permite acceso al homepage/dashboard
   } else {
     router.navigate(['/login']); // Redirige al login si no hay token
     return false;

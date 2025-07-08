@@ -19,13 +19,12 @@ export class RegisterComponent {
   qrUrl: string = '';
 
   campos = [
-    { control: 'nombre', label: 'Nombre completo', placeholder: 'Ej. Juan Pérez', type: 'text' },
-    { control: 'rol', label: 'Rol', placeholder: 'Ej. doctor', type: 'text' },
+    { control: 'nombre', label: 'Nombre completo', placeholder: 'Juan Pérez', type: 'text' },
     { control: 'correo', label: 'Correo electrónico', placeholder: 'correo@empresa.com', type: 'email' },
     { control: 'password', label: 'Contraseña', placeholder: '••••••••••••', type: 'password' },
-    { control: 'telefono', label: 'Teléfono', placeholder: 'Ej. 4421234567', type: 'text' },
-    { control: 'especialidad', label: 'Especialidad', placeholder: 'Ej. Cardiología', type: 'text' }
+    { control: 'telefono', label: 'Teléfono', placeholder: '4421234567', type: 'text' },
   ];
+
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.registerForm = this.fb.group({
@@ -34,7 +33,21 @@ export class RegisterComponent {
       correo: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       telefono: ['', Validators.required],
-      especialidad: ['', Validators.required],
+    especialidad: [''], 
+    });
+
+    // Escucha cambios del campo "rol"
+    this.registerForm.get('rol')?.valueChanges.subscribe((rol) => {
+      const especialidad = this.registerForm.get('especialidad');
+
+      if (rol === 'doctor') {
+        especialidad?.setValidators(Validators.required);
+      } else {
+        especialidad?.clearValidators();
+        especialidad?.setValue('');
+      }
+
+      especialidad?.updateValueAndValidity();
     });
   }
 

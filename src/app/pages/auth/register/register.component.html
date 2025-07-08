@@ -8,6 +8,17 @@
     </div>
 
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
+      <!-- Select de rol -->
+      <div class="form-group">
+        <label for="rol">Rol</label>
+        <select id="rol" formControlName="rol" pInputText>
+          <option value="" disabled selected>Seleccione un rol</option>
+          <option value="doctor">Doctor</option>
+          <option value="paciente">Paciente</option>
+        </select>
+      </div>
+
+      <!-- Campos generales -->
       <div class="form-group" *ngFor="let field of campos">
         <label [for]="field.control">{{ field.label }}</label>
         <input
@@ -16,6 +27,18 @@
           [id]="field.control"
           [formControlName]="field.control"
           [placeholder]="field.placeholder"
+        />
+      </div>
+
+      <!-- Campo especialidad si es doctor -->
+      <div class="form-group" *ngIf="registerForm.get('rol')?.value === 'doctor'">
+        <label for="especialidad">Especialidad</label>
+        <input
+          pInputText
+          type="text"
+          id="especialidad"
+          formControlName="especialidad"
+          placeholder="Cardiología"
         />
       </div>
 
