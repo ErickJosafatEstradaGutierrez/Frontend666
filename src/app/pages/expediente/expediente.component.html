@@ -1,1 +1,44 @@
-<p>expediente works!</p>
+<!-- \src\app\pages\expediente\expediente.component.html -->
+<div class="expediente-list" *ngIf="expedientes.length > 0; else sinExpedientes">
+  <p-table [value]="expedientes" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Paciente</th>
+        <th>Antecedentes</th>
+        <th>Historial</th>
+        <th>Seguro</th>
+        <th *ngIf="puedeActualizar() || puedeEliminar()">Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-exp>
+      <tr>
+        <td>{{ exp.id_expediente }}</td>
+        <td>{{ exp.id_paciente }}</td>
+        <td>{{ exp.antecedentes }}</td>
+        <td>{{ exp.historial }}</td>
+        <td>{{ exp.seguro }}</td>
+        <td *ngIf="puedeActualizar() || puedeEliminar()">
+          <button 
+            *ngIf="puedeActualizar()" 
+            pButton 
+            icon="pi pi-pencil" 
+            class="p-button-sm p-button-warning"
+            [routerLink]="['/expediente/update', exp.id_expediente]">
+          </button>
+          <button 
+            *ngIf="puedeEliminar()" 
+            pButton 
+            icon="pi pi-trash" 
+            class="p-button-sm p-button-danger"
+            (click)="confirmarEliminacion(exp.id_expediente)">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<ng-template #sinExpedientes>
+  <p>No hay expedientes disponibles.</p>
+</ng-template>

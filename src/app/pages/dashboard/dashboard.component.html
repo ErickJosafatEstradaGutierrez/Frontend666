@@ -1,9 +1,11 @@
-<!-- dashboard.component.html -->
-<div>
+<div class="dashboard-section">
   <section *ngIf="puedeLeerExpediente()">
     <app-expediente></app-expediente>
   </section>
-  <section *ngIf="!puedeLeerExpediente()">
-    <p>No tienes permisos para ver el módulo de expedientes.</p>
+  
+  <section *ngIf="!puedeLeerExpediente()" class="no-permission">
+    <p-card>
+      <p>No tienes permisos para ver el módulo de expedientes.</p>
+    </p-card>
   </section>
 </div>

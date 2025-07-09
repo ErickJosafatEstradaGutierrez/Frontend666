@@ -9,6 +9,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
+import { TokenService } from '../../services/token.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +33,7 @@ export class LoginComponent {
   mensajeError: string = '';
   mensajesError: any[] = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private tokenService: TokenService, private router: Router) {
     this.loginForm = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -49,9 +51,15 @@ export class LoginComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (resp) => {
-        localStorage.setItem('access_token', resp.access_token);
-        localStorage.setItem('refresh_token', resp.refresh_token);
-        // Redirigir a dashboard
+        const data = resp.Data?.[0];
+
+        this.tokenService.setToken(data.access_token);
+        this.tokenService.setPermisos(data.permisos);
+
+        console.log('Token establecido:', data.access_token);
+        console.log('Permisos establecidos:', data.permisos);
+
+        this.router.navigate(['/dashboard']); // <- IMPORTANTE: después de guardar
       },
       error: (err) => {
         this.mensajeError = err.error?.Data?.[0]?.mensaje || 'Error desconocido';

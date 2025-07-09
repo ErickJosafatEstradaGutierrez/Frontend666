@@ -1,4 +1,4 @@
-// auth.guard.ts
+// \src\app\pages\auth\auth.guard.ts
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { TokenService } from '../services/token.service';

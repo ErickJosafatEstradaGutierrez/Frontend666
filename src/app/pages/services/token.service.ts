@@ -1,4 +1,4 @@
-// token.service.ts
+// \src\app\pages\services\token.service.ts
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -8,16 +8,28 @@ export class TokenService {
   private readonly TOKEN_KEY = 'access_token';
   private readonly PERMISOS_KEY = 'permisos';
 
+  // Almacenar token correctamente
   setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(this.TOKEN_KEY, token);
+      console.log('Token guardado en localStorage:', token);
+    }
   }
 
+  // Recuperar token
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      console.log('Token recuperado:', token);
+      return token;
+    }
+    return null;
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(this.TOKEN_KEY);
+    }
   }
 
   isAuthenticated(): boolean {
@@ -25,12 +37,17 @@ export class TokenService {
   }
 
   setPermisos(permisos: string[]): void {
-    localStorage.setItem(this.PERMISOS_KEY, JSON.stringify(permisos));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(this.PERMISOS_KEY, JSON.stringify(permisos));
+    }
   }
 
   getPermisos(): string[] {
-    const permisos = localStorage.getItem(this.PERMISOS_KEY);
-    return permisos ? JSON.parse(permisos) : [];
+    if (typeof window !== 'undefined') {
+      const permisos = localStorage.getItem(this.PERMISOS_KEY);
+      return permisos ? JSON.parse(permisos) : [];
+    }
+    return [];
   }
 
   hasPermiso(nombrePermiso: string): boolean {

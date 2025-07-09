@@ -1,3 +1,4 @@
+// \src\app\pages\expediente\create\create.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,7 +23,7 @@ import { ToastModule } from 'primeng/toast';
   styleUrl: './create.component.css',
   providers: [MessageService],
 })
-export class CreateComponent {
+export class CreateExpComponent {
   form: FormGroup;
 
   constructor(
