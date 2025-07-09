@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class TokenService {
   private readonly TOKEN_KEY = 'access_token';
+  private readonly PERMISOS_KEY = 'permisos';
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -21,5 +22,18 @@ export class TokenService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  setPermisos(permisos: string[]): void {
+    localStorage.setItem(this.PERMISOS_KEY, JSON.stringify(permisos));
+  }
+
+  getPermisos(): string[] {
+    const permisos = localStorage.getItem(this.PERMISOS_KEY);
+    return permisos ? JSON.parse(permisos) : [];
+  }
+
+  hasPermiso(nombrePermiso: string): boolean {
+    return this.getPermisos().includes(nombrePermiso);
   }
 }

@@ -25,13 +25,29 @@ export class AuthService {
     ) {}
 
   login(data: LoginData): Observable<any> {
-  return this.http.post(`${this.apiUrl}/login`, data).pipe(
-    tap((response: any) => {
-      this.tokenService.setToken(response.access_token);
-      this.router.navigate(['/dashboard']); // Redirige al dashboard
-    })
-  );
-}
+    return this.http.post(`${this.apiUrl}/login`, data).pipe(
+      tap((response: any) => {
+        console.log('Respuesta completa del login:', response);
+
+        // Verificar si la respuesta tiene la estructura esperada
+        if (response.Data && response.Data[0]) {
+          const authData = response.Data[0];
+          
+          this.tokenService.setToken(authData.access_token);
+          localStorage.setItem('refresh_token', authData.refresh_token);
+          this.tokenService.setPermisos(authData.permisos || []);
+          
+          console.log('Token establecido:', authData.access_token);
+          console.log('Permisos establecidos:', authData.permisos);
+          
+          this.router.navigate(['/dashboard']);
+        } else {
+          console.error('Estructura de respuesta inesperada:', response);
+        }
+      })
+    );
+  }
+
   register(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, data);
   }
