@@ -1,5 +1,7 @@
-<div class="dashboard-section">
-  <section *ngIf="puedeLeerExpediente()">
+<!-- \src\app\pages\dashboard\dashboard.component.html -->
+<div class="dashboard-container">
+  <!-- Sección de Expedientes -->
+  <section *ngIf="puedeLeerExpediente()" class="dashboard-section">
     <app-expediente></app-expediente>
   </section>
   
@@ -8,4 +10,27 @@
       <p>No tienes permisos para ver el módulo de expedientes.</p>
     </p-card>
   </section>
+
+  <!-- Sección de Consultas -->
+  <section *ngIf="puedeLeerConsulta()" class="dashboard-section">
+    <app-consulta></app-consulta>
+  </section>
+  
+  <section *ngIf="!puedeLeerConsulta()" class="no-permission">
+    <p-card>
+      <p>No tienes permisos para ver el módulo de consultas.</p>
+    </p-card>
+  </section>
+
+  <!-- Sección de Recetas -->
+  <section *ngIf="puedeLeerReceta()" class="dashboard-section">
+    <app-recetas></app-recetas>
+  </section>
+  
+  <section *ngIf="!puedeLeerReceta()" class="no-permission">
+    <p-card>
+      <p>No tienes permisos para ver el módulo de recetas.</p>
+    </p-card>
+  </section>
+  
 </div>

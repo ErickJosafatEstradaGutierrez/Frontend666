@@ -11,6 +11,9 @@ import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { ExpedienteComponent } from '../expediente/expediente.component';
+//import { ConsultoriosComponent } from '../consultorio/consultorio.component';
+import { ConsultaComponent } from '../consultas/consultas.component';
+import { RecetasComponent } from '../recetas/recetas.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +27,9 @@ import { ExpedienteComponent } from '../expediente/expediente.component';
     CardModule,
     MessageModule,
     MessagesModule,
-    ExpedienteComponent
+    ExpedienteComponent,
+    ConsultaComponent,
+    RecetasComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -36,36 +41,47 @@ export class DashboardComponent {
     return this.tokenService.hasPermiso('add_expediente');
   }
 
+  puedeCrearConsulta(): boolean {
+    return this.tokenService.hasPermiso('add_consulta');
+  }
+
+  puedeCrearReceta(): boolean {
+    return this.tokenService.hasPermiso('add_receta');
+  }
+
   puedeLeerExpediente(): boolean {
     return this.tokenService.hasPermiso('read_expediente');
+  }
+
+  puedeLeerConsulta(): boolean {
+    return this.tokenService.hasPermiso('read_consulta');
+  }
+
+  puedeLeerReceta(): boolean {
+    return this.tokenService.hasPermiso('read_receta');
   }
 
   puedeActualizarExpediente(): boolean {
     return this.tokenService.hasPermiso('update_expediente');
   }
 
+  puedeActualizarConsulta(): boolean {
+    return this.tokenService.hasPermiso('update_consulta');
+  }
+
+  puedeActualizaReceta(): boolean {
+    return this.tokenService.hasPermiso('update_receta');
+  }
+
   puedeEliminarExpediente(): boolean {
     return this.tokenService.hasPermiso('delete_expediente');
   }
 
-  // Action methods
-  crearExpediente() {
-    // Implement your create logic here
-    console.log('Crear expediente clicked');
+  puedeEliminarConsulta(): boolean {
+    return this.tokenService.hasPermiso('delete_consulta');
   }
 
-  verExpedientes() {
-    // Implement your view logic here
-    console.log('Ver expedientes clicked');
-  }
-
-  editarExpediente() {
-    // Implement your edit logic here
-    console.log('Editar expediente clicked');
-  }
-
-  eliminarExpediente() {
-    // Implement your delete logic here
-    console.log('Eliminar expediente clicked');
+  puedeEliminarReceta(): boolean {
+    return this.tokenService.hasPermiso('delete_receta');
   }
 }

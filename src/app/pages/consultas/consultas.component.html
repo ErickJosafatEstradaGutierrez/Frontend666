@@ -1,0 +1,252 @@
+<!-- \src\app\pages\consultas\consultas.component.html -->
+<div class="container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="btn btn-success" *ngIf="puedeCrear()" (click)="abrirDialogoCrear()">
+      <i class="icon-plus"></i> Nueva Consulta
+    </button>
+    <button class="btn btn-secondary" (click)="cargarConsultas()">
+      <i class="icon-refresh"></i> Recargar Consultas
+    </button>
+  </div>
+
+  <!-- Tabla de consultas -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Tipo</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let consulta of consultas">
+          <td>{{ consulta.id_consulta }}</td>
+          <td>{{ consulta.id_paciente }}</td>
+          <td>{{ consulta.id_medico }}</td>
+          <td>{{ consulta.tipo }}</td>
+          <td>{{ consulta.fecha | date }}</td>
+          <td>{{ consulta.hora }}</td>
+          <td class="action-buttons">
+            <button class="btn btn-info btn-sm" *ngIf="puedeLeer()" (click)="verConsulta(consulta)">
+              <i class="icon-eye"></i>
+            </button>
+            <button class="btn btn-warning btn-sm" *ngIf="puedeActualizar()" (click)="abrirDialogoEditar(consulta)">
+              <i class="icon-edit"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" *ngIf="puedeEliminar()" (click)="confirmarEliminacion(consulta)">
+              <i class="icon-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="consultas.length === 0">
+          <td colspan="7" class="text-center">No hay consultas registradas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Diálogo para crear consulta -->
+  <div class="dialog-overlay" *ngIf="displayCreateDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Nueva Consulta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <form [formGroup]="createForm" (ngSubmit)="crearConsulta()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create_id_consultorio">Consultorio *</label>
+            <input type="number" id="create_id_consultorio" formControlName="id_consultorio">
+          </div>
+          
+          <div class="form-group">
+            <label for="create_id_medico">Médico *</label>
+            <input type="number" id="create_id_medico" formControlName="id_medico">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create_id_paciente">Paciente *</label>
+            <input type="number" id="create_id_paciente" formControlName="id_paciente">
+          </div>
+          
+          <div class="form-group">
+            <label for="create_tipo">Tipo *</label>
+            <select id="create_tipo" formControlName="tipo">
+              <option value="">Seleccione...</option>
+              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{tipo}}</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create_fecha">Fecha *</label>
+            <input type="date" id="create_fecha" formControlName="fecha">
+          </div>
+          
+          <div class="form-group">
+            <label for="create_hora">Hora *</label>
+            <input type="time" id="create_hora" formControlName="hora">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="create_diagnostico">Diagnóstico *</label>
+          <textarea id="create_diagnostico" formControlName="diagnostico" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="create_costo">Costo *</label>
+          <input type="number" step="0.01" id="create_costo" formControlName="costo">
+        </div>
+        
+        <div class="dialog-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarDialogos()">Cancelar</button>
+          <button type="submit" class="btn btn-success" [disabled]="createForm.invalid">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Diálogo para editar consulta -->
+  <div class="dialog-overlay" *ngIf="displayEditDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Editar Consulta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <form [formGroup]="editForm" (ngSubmit)="actualizarConsulta()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit_id_consultorio">Consultorio *</label>
+            <input type="number" id="edit_id_consultorio" formControlName="id_consultorio">
+          </div>
+          
+          <div class="form-group">
+            <label for="edit_id_medico">Médico *</label>
+            <input type="number" id="edit_id_medico" formControlName="id_medico">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit_id_paciente">Paciente *</label>
+            <input type="number" id="edit_id_paciente" formControlName="id_paciente">
+          </div>
+          
+          <div class="form-group">
+            <label for="edit_tipo">Tipo *</label>
+            <select id="edit_tipo" formControlName="tipo">
+              <option value="">Seleccione...</option>
+              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{tipo}}</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit_fecha">Fecha *</label>
+            <input type="date" id="edit_fecha" formControlName="fecha">
+          </div>
+          
+          <div class="form-group">
+            <label for="edit_hora">Hora *</label>
+            <input type="time" id="edit_hora" formControlName="hora">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_diagnostico">Diagnóstico *</label>
+          <textarea id="edit_diagnostico" formControlName="diagnostico" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_costo">Costo *</label>
+          <input type="number" step="0.01" id="edit_costo" formControlName="costo">
+        </div>
+        
+        <div class="dialog-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarDialogos()">Cancelar</button>
+          <button type="submit" class="btn btn-warning" [disabled]="editForm.invalid">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Diálogo para ver consulta -->
+  <div class="dialog-overlay" *ngIf="displayViewDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Detalles de Consulta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <div *ngIf="selectedConsulta" class="details-container">
+        <div class="detail-item">
+          <label><strong>ID Consulta:</strong></label>
+          <p>{{ selectedConsulta.id_consulta }}</p>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-item">
+            <label><strong>Consultorio:</strong></label>
+            <p>{{ selectedConsulta.id_consultorio }}</p>
+          </div>
+          
+          <div class="detail-item">
+            <label><strong>Médico:</strong></label>
+            <p>{{ selectedConsulta.id_medico }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-item">
+            <label><strong>Paciente:</strong></label>
+            <p>{{ selectedConsulta.id_paciente }}</p>
+          </div>
+          
+          <div class="detail-item">
+            <label><strong>Tipo:</strong></label>
+            <p>{{ selectedConsulta.tipo }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-item">
+            <label><strong>Fecha:</strong></label>
+            <p>{{ selectedConsulta.fecha | date }}</p>
+          </div>
+          
+          <div class="detail-item">
+            <label><strong>Hora:</strong></label>
+            <p>{{ selectedConsulta.hora }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Diagnóstico:</strong></label>
+          <p class="diagnostico-text">{{ selectedConsulta.diagnostico }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Costo:</strong></label>
+          <p>{{ selectedConsulta.costo | currency }}</p>
+        </div>
+      </div>
+      
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarDialogos()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

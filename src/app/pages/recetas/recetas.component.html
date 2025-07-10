@@ -1,0 +1,286 @@
+<div class="container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button *ngIf="puedeCrear()" class="btn btn-success" (click)="abrirDialogoCrear()">
+      <i class="icon-plus"></i> Nueva Receta
+    </button>
+    <button class="btn btn-secondary" (click)="cargarRecetas()">
+      <i class="icon-refresh"></i> Recargar
+    </button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Consultorio</th>
+          <th>Médico</th>
+          <th>Paciente</th>
+          <th>Fecha</th>
+          <th>Medicamento</th>
+          <th>Dosis</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let receta of recetas">
+          <td>{{ receta.id_consultorio }}</td>
+          <td>{{ receta.id_medico }}</td>
+          <td>{{ receta.id_paciente }}</td>
+          <td>{{ receta.fecha | date:'shortDate' }}</td>
+          <td>{{ receta.medicamento }}</td>
+          <td>{{ receta.dosis }}</td>
+          <td class="action-buttons">
+            <button class="btn btn-info btn-sm"
+                (click)="verReceta(receta)"
+                *ngIf="puedeLeer()">
+                <i class="icon-eye"></i>
+            </button>
+            <button class="btn btn-warning btn-sm"
+                (click)="abrirDialogoEditar(receta)"
+                *ngIf="puedeActualizar()">
+                <i class="icon-edit"></i>
+            </button>
+            <button class="btn btn-danger btn-sm"
+                (click)="confirmarEliminacion(receta)"
+                *ngIf="puedeEliminar()">
+                <i class="icon-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="recetas.length === 0">
+          <td colspan="7" class="text-center">No hay recetas registradas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Diálogo para crear receta -->
+  <div class="dialog-overlay" *ngIf="displayCreateDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Crear Nueva Receta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <form [formGroup]="createForm" (ngSubmit)="crearReceta()">
+        <div class="form-group">
+          <label for="id_consultorio">ID Consultorio *</label>
+          <input 
+            type="text"
+            id="id_consultorio" 
+            formControlName="id_consultorio"
+            placeholder="Ingrese el ID del consultorio"
+            [class.invalid]="createForm.get('id_consultorio')?.invalid && createForm.get('id_consultorio')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="id_medico">ID Médico *</label>
+          <input 
+            type="text"
+            id="id_medico" 
+            formControlName="id_medico"
+            placeholder="Ingrese el ID del médico"
+            [class.invalid]="createForm.get('id_medico')?.invalid && createForm.get('id_medico')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="id_paciente">ID Paciente *</label>
+          <input 
+            type="text"
+            id="id_paciente" 
+            formControlName="id_paciente"
+            placeholder="Ingrese el ID del paciente"
+            [class.invalid]="createForm.get('id_paciente')?.invalid && createForm.get('id_paciente')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="fecha">Fecha *</label>
+          <input 
+            type="date"
+            id="fecha" 
+            formControlName="fecha"
+            [class.invalid]="createForm.get('fecha')?.invalid && createForm.get('fecha')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="medicamento">Medicamento *</label>
+          <input 
+            type="text"
+            id="medicamento" 
+            formControlName="medicamento"
+            placeholder="Ingrese el nombre del medicamento"
+            [class.invalid]="createForm.get('medicamento')?.invalid && createForm.get('medicamento')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="dosis">Dosis *</label>
+          <input 
+            type="text"
+            id="dosis" 
+            formControlName="dosis"
+            placeholder="Ingrese la dosis"
+            [class.invalid]="createForm.get('dosis')?.invalid && createForm.get('dosis')?.touched">
+        </div>
+        
+        <div class="dialog-footer">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="cerrarDialogos()">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-success"
+            [disabled]="createForm.invalid">
+            Crear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Diálogo para editar receta -->
+  <div class="dialog-overlay" *ngIf="displayEditDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Editar Receta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <form [formGroup]="editForm" (ngSubmit)="actualizarReceta()">
+        <div class="form-group">
+          <label for="edit_id_consultorio">ID Consultorio *</label>
+          <input 
+            type="text"
+            id="edit_id_consultorio" 
+            formControlName="id_consultorio"
+            placeholder="Ingrese el ID del consultorio"
+            [class.invalid]="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_id_medico">ID Médico *</label>
+          <input 
+            type="text"
+            id="edit_id_medico" 
+            formControlName="id_medico"
+            placeholder="Ingrese el ID del médico"
+            [class.invalid]="editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_id_paciente">ID Paciente *</label>
+          <input 
+            type="text"
+            id="edit_id_paciente" 
+            formControlName="id_paciente"
+            placeholder="Ingrese el ID del paciente"
+            [class.invalid]="editForm.get('id_paciente')?.invalid && editForm.get('id_paciente')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_fecha">Fecha *</label>
+          <input 
+            type="date"
+            id="edit_fecha" 
+            formControlName="fecha"
+            [class.invalid]="editForm.get('fecha')?.invalid && editForm.get('fecha')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_medicamento">Medicamento *</label>
+          <input 
+            type="text"
+            id="edit_medicamento" 
+            formControlName="medicamento"
+            placeholder="Ingrese el nombre del medicamento"
+            [class.invalid]="editForm.get('medicamento')?.invalid && editForm.get('medicamento')?.touched">
+        </div>
+        
+        <div class="form-group">
+          <label for="edit_dosis">Dosis *</label>
+          <input 
+            type="text"
+            id="edit_dosis" 
+            formControlName="dosis"
+            placeholder="Ingrese la dosis"
+            [class.invalid]="editForm.get('dosis')?.invalid && editForm.get('dosis')?.touched">
+        </div>
+        
+        <div class="dialog-footer">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="cerrarDialogos()">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-warning"
+            [disabled]="editForm.invalid">
+            Actualizar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Diálogo para ver receta -->
+  <div class="dialog-overlay" *ngIf="displayViewDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Detalles de la Receta</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <div *ngIf="selectedReceta" class="details-container">
+        <div class="detail-item">
+          <label><strong>ID Receta:</strong></label>
+          <p>{{ selectedReceta.id_receta }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Consultorio:</strong></label>
+          <p>{{ selectedReceta.id_consultorio }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Médico:</strong></label>
+          <p>{{ selectedReceta.id_medico }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Paciente:</strong></label>
+          <p>{{ selectedReceta.id_paciente }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Fecha:</strong></label>
+          <p>{{ selectedReceta.fecha | date:'mediumDate' }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Medicamento:</strong></label>
+          <p>{{ selectedReceta.medicamento }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Dosis:</strong></label>
+          <p>{{ selectedReceta.dosis }}</p>
+        </div>
+      </div>
+      
+      <div class="dialog-footer">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="cerrarDialogos()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

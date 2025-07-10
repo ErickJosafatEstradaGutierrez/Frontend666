@@ -1,0 +1,288 @@
+<!-- \src\app\pages\consultorios\consultorios.component.html -->
+<div class="container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button 
+      *ngIf="puedeCrear()"
+      pButton 
+      label="Nuevo Consultorio" 
+      icon="pi pi-plus" 
+      class="p-button-success"
+      (click)="abrirDialogoCrear()">
+    </button>
+
+    <button 
+      pButton 
+      label="Recargar" 
+      icon="pi pi-refresh" 
+      class="p-button-secondary"
+      (click)="cargarConsultorios()">
+    </button>
+  </div>
+
+  <!-- Tabla de consultorios -->
+  <p-table [value]="consultorios" [loading]="loading" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>Ubicación</th>
+        <th>ID Médico</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-consultorio>
+      <tr>
+        <td>{{ consultorio.id_consultorio }}</td>
+        <td>{{ consultorio.nombre }}</td>
+        <td>{{ consultorio.tipo }}</td>
+        <td>{{ consultorio.ubicacion }}</td>
+        <td>{{ consultorio.id_medico }}</td>
+        <td>
+          <button 
+            *ngIf="puedeLeer()"
+            pButton 
+            icon="pi pi-eye" 
+            class="p-button-info p-button-sm"
+            (click)="verConsultorio(consultorio)">
+          </button>
+          
+          <button 
+            *ngIf="puedeActualizar()"
+            pButton 
+            icon="pi pi-pencil" 
+            class="p-button-warning p-button-sm"
+            (click)="abrirDialogoEditar(consultorio)">
+          </button>
+          
+          <button 
+            *ngIf="puedeEliminar()"
+            pButton 
+            icon="pi pi-trash" 
+            class="p-button-danger p-button-sm"
+            (click)="confirmarEliminacion(consultorio)">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Diálogo para crear consultorio -->
+  <p-dialog 
+    header="Nuevo Consultorio" 
+    [(visible)]="displayCreateDialog" 
+    [modal]="true" 
+    [style]="{width: '50vw'}"
+    [dismissableMask]="true">
+    
+    <form [formGroup]="createForm" (ngSubmit)="crearConsultorio()">
+      <div class="p-fluid">
+        <div class="p-field mb-3">
+          <label for="nombre">Nombre *</label>
+          <input 
+            pInputText 
+            id="nombre" 
+            formControlName="nombre"
+            placeholder="Nombre del consultorio"
+            [class]="{'ng-invalid ng-dirty': createForm.get('nombre')?.invalid && createForm.get('nombre')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="tipo">Tipo *</label>
+          <input 
+            pInputText 
+            id="tipo" 
+            formControlName="tipo"
+            placeholder="Tipo de consultorio"
+            [class]="{'ng-invalid ng-dirty': createForm.get('tipo')?.invalid && createForm.get('tipo')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="ubicacion">Ubicación *</label>
+          <input 
+            pInputText 
+            id="ubicacion" 
+            formControlName="ubicacion"
+            placeholder="Ubicación del consultorio"
+            [class]="{'ng-invalid ng-dirty': createForm.get('ubicacion')?.invalid && createForm.get('ubicacion')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="id_medico">ID Médico *</label>
+          <input 
+            pInputText 
+            id="id_medico" 
+            formControlName="id_medico"
+            placeholder="ID del médico responsable"
+            [class]="{'ng-invalid ng-dirty': createForm.get('id_medico')?.invalid && createForm.get('id_medico')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="telefono">Teléfono *</label>
+          <input 
+            pInputText 
+            id="telefono" 
+            formControlName="telefono"
+            placeholder="Teléfono del consultorio"
+            [class]="{'ng-invalid ng-dirty': createForm.get('telefono')?.invalid && createForm.get('telefono')?.touched}">
+        </div>
+      </div>
+      
+      <div class="p-dialog-footer">
+        <button 
+          pButton 
+          type="button" 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          class="p-button-secondary"
+          (click)="cerrarDialogos()">
+        </button>
+        <button 
+          pButton 
+          type="submit" 
+          label="Crear" 
+          icon="pi pi-check" 
+          class="p-button-success"
+          [disabled]="createForm.invalid">
+        </button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Diálogo para editar consultorio -->
+  <p-dialog 
+    header="Editar Consultorio" 
+    [(visible)]="displayEditDialog" 
+    [modal]="true" 
+    [style]="{width: '50vw'}"
+    [dismissableMask]="true">
+    
+    <form [formGroup]="editForm" (ngSubmit)="actualizarConsultorio()">
+      <div class="p-fluid">
+        <div class="p-field mb-3">
+          <label for="edit_nombre">Nombre *</label>
+          <input 
+            pInputText 
+            id="edit_nombre" 
+            formControlName="nombre"
+            [class]="{'ng-invalid ng-dirty': editForm.get('nombre')?.invalid && editForm.get('nombre')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="edit_tipo">Tipo *</label>
+          <input 
+            pInputText 
+            id="edit_tipo" 
+            formControlName="tipo"
+            [class]="{'ng-invalid ng-dirty': editForm.get('tipo')?.invalid && editForm.get('tipo')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="edit_ubicacion">Ubicación *</label>
+          <input 
+            pInputText 
+            id="edit_ubicacion" 
+            formControlName="ubicacion"
+            [class]="{'ng-invalid ng-dirty': editForm.get('ubicacion')?.invalid && editForm.get('ubicacion')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="edit_id_medico">ID Médico *</label>
+          <input 
+            pInputText 
+            id="edit_id_medico" 
+            formControlName="id_medico"
+            [class]="{'ng-invalid ng-dirty': editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched}">
+        </div>
+        
+        <div class="p-field mb-3">
+          <label for="edit_telefono">Teléfono *</label>
+          <input 
+            pInputText 
+            id="edit_telefono" 
+            formControlName="telefono"
+            [class]="{'ng-invalid ng-dirty': editForm.get('telefono')?.invalid && editForm.get('telefono')?.touched}">
+        </div>
+      </div>
+      
+      <div class="p-dialog-footer">
+        <button 
+          pButton 
+          type="button" 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          class="p-button-secondary"
+          (click)="cerrarDialogos()">
+        </button>
+        <button 
+          pButton 
+          type="submit" 
+          label="Actualizar" 
+          icon="pi pi-check" 
+          class="p-button-warning"
+          [disabled]="editForm.invalid">
+        </button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <!-- Diálogo para ver consultorio -->
+  <p-dialog 
+    header="Detalles del Consultorio" 
+    [(visible)]="displayViewDialog" 
+    [modal]="true" 
+    [style]="{width: '50vw'}"
+    [dismissableMask]="true">
+    
+    <div *ngIf="selectedConsultorio" class="p-fluid">
+      <div class="p-field mb-3">
+        <label><strong>ID:</strong></label>
+        <p>{{ selectedConsultorio.id_consultorio }}</p>
+      </div>
+      
+      <div class="p-field mb-3">
+        <label><strong>Nombre:</strong></label>
+        <p>{{ selectedConsultorio.nombre }}</p>
+      </div>
+      
+      <div class="p-field mb-3">
+        <label><strong>Tipo:</strong></label>
+        <p>{{ selectedConsultorio.tipo }}</p>
+      </div>
+      
+      <div class="p-field mb-3">
+        <label><strong>Ubicación:</strong></label>
+        <p>{{ selectedConsultorio.ubicacion }}</p>
+      </div>
+      
+      <div class="p-field mb-3">
+        <label><strong>ID Médico:</strong></label>
+        <p>{{ selectedConsultorio.id_medico }}</p>
+      </div>
+      
+      <div class="p-field mb-3">
+        <label><strong>Teléfono:</strong></label>
+        <p>{{ selectedConsultorio.telefono }}</p>
+      </div>
+    </div>
+    
+    <div class="p-dialog-footer">
+      <button 
+        pButton 
+        type="button" 
+        label="Cerrar" 
+        icon="pi pi-times" 
+        class="p-button-secondary"
+        (click)="cerrarDialogos()">
+      </button>
+    </div>
+  </p-dialog>
+
+  <!-- Diálogo de confirmación -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Toast para mensajes -->
+  <p-toast></p-toast>
+</div>

@@ -1,60 +1,70 @@
 // \src\app\pages\expediente\expediente.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { TokenService } from '../../pages/services/token.service';
-import { TableModule } from 'primeng/table';
 import { ExpedienteService } from '../services/expediente.service';
-import { DialogModule } from 'primeng/dialog';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from '../../pages/services/auth.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-expediente',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    ButtonModule,
-    TableModule,
-    DialogModule,
-    ConfirmDialogModule
+    ReactiveFormsModule,
   ],
   templateUrl: './expediente.component.html',
   styleUrls: ['./expediente.component.css'],
   providers: [ConfirmationService, MessageService]
 })
-export class ExpedienteComponent {
+export class ExpedienteComponent implements OnInit {
   expedientes: any[] = [];
-  selectedExpediente: any;
-  displayDialog = false;
-  tokenReady = false;
+  selectedExpediente: any = null;
+  
+  // Diálogos
+  displayCreateDialog = false;
+  displayEditDialog = false;
+  displayViewDialog = false;
+  
+  // Formularios
+  createForm!: FormGroup;
+  editForm!: FormGroup;
+  
+  // Estados
+  loading = false;
+  isEditing = false;
 
   constructor(
+    private fb: FormBuilder,
     private tokenService: TokenService,
     private expedienteService: ExpedienteService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private authService: AuthService
-  ) {}
+  ) {
+    this.initializeForms();
+  }
 
   ngOnInit() {
     this.cargarExpedientes();
   }
 
-   private verifyToken() {
-    const checkToken = () => {
-      const token = this.tokenService.getToken();
-      if (token) {
-        this.tokenReady = true;
-        this.cargarExpedientes();
-      } else {
-        setTimeout(checkToken, 100);
-      }
-    };
-    checkToken();
+  private initializeForms() {
+    this.createForm = this.fb.group({
+      id_paciente: ['', [Validators.required]],
+      antecedentes: ['', [Validators.required]],
+      historial: ['', [Validators.required]],
+      seguro: ['', [Validators.required]]
+    });
+
+    this.editForm = this.fb.group({
+      id_expediente: [''],
+      id_paciente: ['', [Validators.required]],
+      antecedentes: ['', [Validators.required]],
+      historial: ['', [Validators.required]],
+      seguro: ['', [Validators.required]]
+    });
   }
 
   cargarExpedientes() {
@@ -67,9 +77,14 @@ export class ExpedienteComponent {
       return;
     }
 
+    this.loading = true;
     this.expedienteService.obtenerExpedientes().subscribe({
-      next: (data) => this.expedientes = data,
+      next: (data) => {
+        this.expedientes = data;
+        this.loading = false;
+      },
       error: (err) => {
+        this.loading = false;
         if (err.status === 401) {
           this.handleUnauthorized();
         } else {
@@ -83,15 +98,7 @@ export class ExpedienteComponent {
     });
   }
 
-  private handleUnauthorized() {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Sesión expirada',
-      detail: 'Por favor vuelve a iniciar sesión'
-    });
-    //this.authService.logout(); // Método para limpiar el token y redirigir
-  }
-
+  // =============== MÉTODOS DE PERMISOS ===============
   puedeLeer(): boolean {
     return this.tokenService.hasPermiso('read_expediente');
   }
@@ -108,10 +115,135 @@ export class ExpedienteComponent {
     return this.tokenService.hasPermiso('delete_expediente');
   }
 
-  confirmarEliminacion(id: number) {
+  // =============== OPERACIONES CRUD ===============
+
+  // ========== CREAR EXPEDIENTE ==========
+  abrirDialogoCrear() {
+    if (!this.puedeCrear()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Permiso denegado',
+        detail: 'No tienes permisos para crear expedientes'
+      });
+      return;
+    }
+    
+    this.createForm.reset();
+    this.displayCreateDialog = true;
+  }
+
+  crearExpediente() {
+    if (this.createForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario inválido',
+        detail: 'Por favor completa todos los campos requeridos'
+      });
+      return;
+    }
+
+    const expedienteData = this.createForm.value;
+    
+    this.expedienteService.crearExpediente(expedienteData).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Expediente creado correctamente'
+        });
+        this.displayCreateDialog = false;
+        this.cargarExpedientes();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear el expediente'
+        });
+      }
+    });
+  }
+
+  // ========== VER EXPEDIENTE ==========
+  verExpediente(expediente: any) {
+    if (!this.puedeLeer()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Permiso denegado',
+        detail: 'No tienes permisos para ver expedientes'
+      });
+      return;
+    }
+
+    this.selectedExpediente = expediente;
+    this.displayViewDialog = true;
+  }
+
+  // ========== EDITAR EXPEDIENTE ==========
+  abrirDialogoEditar(expediente: any) {
+    if (!this.puedeActualizar()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Permiso denegado',
+        detail: 'No tienes permisos para editar expedientes'
+      });
+      return;
+    }
+
+    this.selectedExpediente = expediente;
+    this.editForm.patchValue(expediente);
+    this.displayEditDialog = true;
+  }
+
+  actualizarExpediente() {
+    if (this.editForm.invalid) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario inválido',
+        detail: 'Por favor completa todos los campos requeridos'
+      });
+      return;
+    }
+
+    const expedienteData = this.editForm.value;
+    const id = this.selectedExpediente.id_expediente;
+
+    this.expedienteService.actualizarExpediente(id, expedienteData).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Expediente actualizado correctamente'
+        });
+        this.displayEditDialog = false;
+        this.cargarExpedientes();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo actualizar el expediente'
+        });
+      }
+    });
+  }
+
+  // ========== ELIMINAR EXPEDIENTE ==========
+  confirmarEliminacion(expediente: any) {
+    if (!this.puedeEliminar()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Permiso denegado',
+        detail: 'No tienes permisos para eliminar expedientes'
+      });
+      return;
+    }
+
     this.confirmationService.confirm({
-      message: '¿Estás seguro de eliminar este expediente?',
-      accept: () => this.eliminarExpediente(id)
+      message: `¿Estás seguro de eliminar el expediente del paciente ${expediente.id_paciente}?`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => this.eliminarExpediente(expediente.id_expediente)
     });
   }
 
@@ -125,11 +257,31 @@ export class ExpedienteComponent {
         });
         this.cargarExpedientes();
       },
-      error: (err) => this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo eliminar el expediente'
-      })
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el expediente'
+        });
+      }
     });
+  }
+
+  // ========== UTILIDADES ==========
+  private handleUnauthorized() {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Sesión expirada',
+      detail: 'Por favor vuelve a iniciar sesión'
+    });
+    // Opcional: redirigir al login
+    // this.authService.logout();
+  }
+
+  cerrarDialogos() {
+    this.displayCreateDialog = false;
+    this.displayEditDialog = false;
+    this.displayViewDialog = false;
+    this.selectedExpediente = null;
   }
 }

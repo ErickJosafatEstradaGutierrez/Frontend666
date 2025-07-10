@@ -1,6 +1,4 @@
-/* src/app/pages/expediente/expediente.component.css */
-
-/* ---------- CONTENEDOR PRINCIPAL ---------- */
+/* Estilos generales */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -8,7 +6,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ---------- TOOLBAR ---------- */
+/* Toolbar */
 .toolbar {
   display: flex;
   gap: 10px;
@@ -62,9 +60,10 @@
   color: white;
 }
 
-/* ---------- TABLA DE DATOS ---------- */
+/* Tabla */
 .table-container {
   overflow-x: auto;
+  margin-bottom: 20px;
 }
 
 .data-table {
@@ -74,8 +73,10 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.data-table thead {
-  background-color: #f0f4f8;
+.data-table th, .data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .data-table th {
@@ -86,22 +87,22 @@
   border-bottom: 2px solid #dee2e6;
 }
 
-.data-table td {
-  padding: 10px 15px;
-  border-bottom: 1px solid #dee2e6;
-}
-
 .data-table tbody tr:hover {
-  background-color: #e3f2fd;
+  background-color: #f1f3f5;
 }
 
-/* ---------- ACCIONES DE FILA ---------- */
 .action-buttons {
   display: flex;
   gap: 5px;
 }
 
-/* ---------- DIÁLOGOS ---------- */
+.text-center {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+/* Diálogos */
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -136,7 +137,7 @@
 
 .dialog-header h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #333;
 }
 
@@ -156,20 +157,30 @@
   gap: 10px;
 }
 
-/* ---------- FORMULARIOS ---------- */
-.form-group {
+/* Formularios */
+.form-row {
+  display: flex;
+  gap: 15px;
   margin-bottom: 15px;
-  padding: 0 20px;
+}
+
+.form-group {
+  flex: 1;
+  margin-bottom: 15px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #333;
+  color: #495057;
 }
 
 .form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select,
 .form-group textarea {
   width: 100%;
   padding: 8px 12px;
@@ -191,17 +202,19 @@
   box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
 }
 
-.invalid {
-  border-color: #dc3545 !important;
-}
-
-/* ---------- DETALLES ---------- */
+/* Detalles */
 .details-container {
   padding: 0 20px;
 }
 
-.detail-item {
+.detail-row {
+  display: flex;
+  gap: 15px;
   margin-bottom: 15px;
+}
+
+.detail-item {
+  flex: 1;
 }
 
 .detail-item label {
@@ -218,15 +231,31 @@
   border-radius: 4px;
 }
 
-/* ---------- ANIMACIONES ---------- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.diagnostico-text {
+  white-space: pre-line;
 }
 
-/* ---------- ICONOS ---------- */
+/* Iconos */
 .icon-plus:before { content: "+"; }
 .icon-refresh:before { content: "↻"; }
 .icon-eye:before { content: "👁"; }
 .icon-edit:before { content: "✏"; }
 .icon-trash:before { content: "🗑"; }
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row, .detail-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+}
