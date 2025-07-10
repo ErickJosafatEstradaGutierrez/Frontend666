@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="toolbar">
+    <button class="btn btn-success" (click)="abrirDialogoCrear()">+ Crear Horario</button>
+    <button class="btn btn-secondary" (click)="cargarHorarios()">↻ Recargar</button>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Consultorio</th>
+        <th>Médico</th>
+        <th>Consulta</th>
+        <th>Turno</th>
+        <th>Día</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let h of horarios">
+        <td>{{ h.id_consultorio }}</td>
+        <td>{{ h.id_medico }}</td>
+        <td>{{ h.id_consulta ?? '—' }}</td>
+        <td>{{ h.turno }}</td>
+        <td>{{ h.dia }}</td>
+        <td class="action-buttons">
+          <button class="btn btn-warning btn-sm" (click)="abrirDialogoEditar(h)">✏</button>
+          <button class="btn btn-danger btn-sm" (click)="confirmarEliminacion(h)">🗑</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Crear diálogo -->
+  <div class="dialog-overlay" *ngIf="displayCreateDialog">
+    <div class="dialog">
+      <h3>Nuevo Horario</h3>
+      <form [formGroup]="createForm" (ngSubmit)="crearHorario()">
+        <div class="form-group"><label>Consultorio</label><input formControlName="id_consultorio" type="number"></div>
+        <div class="form-group"><label>Médico</label><input formControlName="id_medico" type="number"></div>
+        <div class="form-group"><label>Consulta (opcional)</label><input formControlName="id_consulta" type="number"></div>
+        <div class="form-group"><label>Turno</label><input formControlName="turno" type="text"></div>
+        <div class="form-group"><label>Día</label><input formControlName="dia" type="text"></div>
+
+        <div class="dialog-footer">
+          <button class="btn btn-secondary" type="button" (click)="cerrarDialogos()">Cancelar</button>
+          <button class="btn btn-success" type="submit" [disabled]="createForm.invalid">Crear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Editar diálogo -->
+  <div class="dialog-overlay" *ngIf="displayEditDialog">
+    <div class="dialog">
+      <h3>Editar Horario</h3>
+      <form [formGroup]="editForm" (ngSubmit)="actualizarHorario()">
+        <div class="form-group"><label>Consultorio</label><input formControlName="id_consultorio" type="number"></div>
+        <div class="form-group"><label>Médico</label><input formControlName="id_medico" type="number"></div>
+        <div class="form-group"><label>Consulta (opcional)</label><input formControlName="id_consulta" type="number"></div>
+        <div class="form-group"><label>Turno</label><input formControlName="turno" type="text"></div>
+        <div class="form-group"><label>Día</label><input formControlName="dia" type="text"></div>
+
+        <div class="dialog-footer">
+          <button class="btn btn-secondary" type="button" (click)="cerrarDialogos()">Cancelar</button>
+          <button class="btn btn-warning" type="submit" [disabled]="editForm.invalid">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

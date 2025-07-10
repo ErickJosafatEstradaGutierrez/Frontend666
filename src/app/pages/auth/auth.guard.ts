@@ -7,16 +7,20 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
 
+  // Si no está autenticado, redirige a login
   if (!tokenService.isAuthenticated()) {
-    router.navigate(['/login']);
-    return false;
+    tokenService.clearToken();
+    return router.createUrlTree(['/login']);
   }
 
+  // Verificación de permisos
   const requiredPermiso = route.data['requiredPermiso'];
   if (requiredPermiso && !tokenService.hasPermiso(requiredPermiso)) {
     console.warn(`Acceso denegado: falta el permiso '${requiredPermiso}'`);
-    router.navigate(['/dashboard']); // O a una página de acceso denegado
-    return false;
+    // Mejor redirigir a una página de "acceso denegado" o mostrar notificación
+    return router.navigate(['/dashboard'], {
+      state: { error: `Falta el permiso: ${requiredPermiso}` }
+    });
   }
 
   return true;

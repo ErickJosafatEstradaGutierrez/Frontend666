@@ -23,8 +23,8 @@ export class ConsultoriosService {
 
   // Obtener todos los consultorios
   obtenerConsultorios(): Observable<Consultorio[]> {
-    return this.http.get<any>(this.apiUrl).pipe(
-      map((response: any) => response.data || [])
+    return this.http.get<Consultorio[]>(this.apiUrl).pipe(
+      map((response: any) => Array.isArray(response) ? response : [])
     );
   }
 

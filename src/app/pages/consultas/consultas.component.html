@@ -34,8 +34,8 @@
         <tr *ngFor="let consulta of consultas">
           <td>{{ consulta.id_consulta }}</td>
           <td>{{ obtenerNombreConsultorio(consulta.id_consultorio) }}</td>
-          <td>{{ consulta.id_paciente }}</td>
-          <td>{{ consulta.id_medico }}</td>
+          <td>{{ obtenerNombrePaciente(consulta.id_paciente) }}</td>
+          <td>{{ obtenerNombreMedico(consulta.id_medico) }}</td>
           <td>
             <span [class]="'badge badge-' + consulta.tipo.toLowerCase()">
               {{ consulta.tipo }}
@@ -92,17 +92,22 @@
           
           <div class="form-group">
             <label for="create_id_medico">Médico *</label>
-            <input type="number" id="create_id_medico" formControlName="id_medico" 
-                   placeholder="ID del médico" class="form-control">
+            <select id="create_id_medico" formControlName="id_medico" class="form-control">
+              <option value="">Seleccione un médico</option>
+              <option *ngFor="let medico of medicos" [value]="medico.id">{{ medico.nombre }}</option>
+            </select>
           </div>
-        </div>
+
         
         <div class="form-row">
           <div class="form-group">
             <label for="create_id_paciente">Paciente *</label>
-            <input type="number" id="create_id_paciente" formControlName="id_paciente" 
-                   placeholder="ID del paciente" class="form-control">
+            <select id="create_id_paciente" formControlName="id_paciente" class="form-control">
+              <option value="">Seleccione un paciente</option>
+              <option *ngFor="let paciente of pacientes" [value]="paciente.id">{{ paciente.nombre }}</option>
+            </select>
           </div>
+
           
           <div class="form-group">
             <label for="create_tipo">Tipo *</label>
@@ -171,17 +176,21 @@
           </div>
           
           <div class="form-group">
-            <label for="edit_id_medico">Médico *</label>
-            <input type="number" id="edit_id_medico" formControlName="id_medico" 
-                   placeholder="ID del médico" class="form-control">
+            <select id="edit_id_medico" formControlName="id_medico" class="form-control">
+              <option value="">Seleccione un médico</option>
+              <option *ngFor="let medico of medicos" [value]="medico.id">{{ medico.nombre }}</option>
+            </select>
+
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
-            <label for="edit_id_paciente">Paciente *</label>
-            <input type="number" id="edit_id_paciente" formControlName="id_paciente" 
-                   placeholder="ID del paciente" class="form-control">
+            <select id="edit_id_paciente" formControlName="id_paciente" class="form-control">
+              <option value="">Seleccione un paciente</option>
+              <option *ngFor="let paciente of pacientes" [value]="paciente.id">{{ paciente.nombre }}</option>
+            </select>
+
           </div>
           
           <div class="form-group">
@@ -247,14 +256,14 @@
           
           <div class="detail-item">
             <label><strong>Médico:</strong></label>
-            <p>{{ selectedConsulta.id_medico }}</p>
+            <p>{{ obtenerNombreMedico(selectedConsulta.id_medico) }}</p>
           </div>
         </div>
         
         <div class="detail-row">
           <div class="detail-item">
             <label><strong>Paciente:</strong></label>
-            <p>{{ selectedConsulta.id_paciente }}</p>
+            <p>{{ obtenerNombrePaciente(selectedConsulta.id_paciente) }}</p>
           </div>
           
           <div class="detail-item">

@@ -7,6 +7,7 @@ import { TokenService } from '../../pages/services/token.service';
 import { AuthService } from '../../pages/services/auth.service';
 import { ConsultaService } from '../../pages/services/consultas.service';
 import { ConsultoriosService, Consultorio } from '../../pages/services/consultorios.service';
+import { UsuarioService, Usuario } from '../../pages/services/usuarios.service';
 
 @Component({
   selector: 'app-consulta',
@@ -25,6 +26,9 @@ export class ConsultaComponent implements OnInit {
   displayEditDialog = false;
   displayViewDialog = false;
 
+  medicos: Usuario[] = [];
+  pacientes: Usuario[] = [];
+
   createForm!: FormGroup;
   editForm!: FormGroup;
 
@@ -33,6 +37,7 @@ export class ConsultaComponent implements OnInit {
   tiposConsulta = ['General', 'Especialidad', 'Urgencia', 'Control'];
 
   constructor(
+    private usuarioService: UsuarioService,
     private fb: FormBuilder,
     private tokenService: TokenService,
     private consultaService: ConsultaService,
@@ -47,12 +52,14 @@ export class ConsultaComponent implements OnInit {
   ngOnInit(): void {
     this.cargarConsultas();
     this.cargarConsultorios();
+    this.cargarMedicos();
+    this.cargarPacientes();
   }
 
   private initializeForms() {
     // Cambio principal: NO deshabilitar los campos desde el inicio
     this.createForm = this.fb.group({
-      id: ['', Validators.required], // Removido el disabled: true
+      id_consultorio: ['', Validators.required],
       id_medico: ['', Validators.required],
       id_paciente: ['', Validators.required],
       tipo: ['', Validators.required],
@@ -200,7 +207,7 @@ export class ConsultaComponent implements OnInit {
 
     // Asegurar que el valor del consultorio sea un número
     const formValue = { ...this.createForm.value };
-    formValue.id = parseInt(formValue.id, 10);
+  formValue.id_consultorio = parseInt(formValue.id_consultorio, 10);
 
     this.consultaService.crearConsulta(formValue).subscribe({
       next: () => {
@@ -347,4 +354,30 @@ export class ConsultaComponent implements OnInit {
     });
     // this.authService.logout(); // Habilita esto si deseas cerrar sesión automáticamente
   }
+
+  cargarMedicos(): void {
+    this.usuarioService.obtenerMedicos().subscribe({
+      next: (data) => this.medicos = data,
+      error: (err) => console.error('Error al cargar médicos:', err)
+    });
+  }
+
+  cargarPacientes(): void {
+    this.usuarioService.obtenerPacientes().subscribe({
+      next: (data) => this.pacientes = data,
+      error: (err) => console.error('Error al cargar pacientes:', err)
+    });
+  }
+
+  obtenerNombreMedico(id: number): string {
+    const medico = this.medicos.find(m => m.id === id);
+    return medico ? medico.nombre : `ID ${id}`;
+  }
+
+  obtenerNombrePaciente(id: number): string {
+    const paciente = this.pacientes.find(p => p.id === id);
+    return paciente ? paciente.nombre : `ID ${id}`;
+  }
+
+
 }
