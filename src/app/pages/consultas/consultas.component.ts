@@ -1,4 +1,4 @@
-// \src\app\pages\consultas\consultas.component.ts
+// src/app/pages/consultas/consultas.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { TokenService } from '../../pages/services/token.service';
 import { AuthService } from '../../pages/services/auth.service';
 import { ConsultaService } from '../../pages/services/consultas.service';
+import { ConsultoriosService, Consultorio } from '../../pages/services/consultorios.service';
 
 @Component({
   selector: 'app-consulta',
@@ -17,6 +18,7 @@ import { ConsultaService } from '../../pages/services/consultas.service';
 })
 export class ConsultaComponent implements OnInit {
   consultas: any[] = [];
+  consultorios: Consultorio[] = [];
   selectedConsulta: any = null;
 
   displayCreateDialog = false;
@@ -27,12 +29,14 @@ export class ConsultaComponent implements OnInit {
   editForm!: FormGroup;
 
   loading = false;
+  loadingConsultorios = false;
   tiposConsulta = ['General', 'Especialidad', 'Urgencia', 'Control'];
 
   constructor(
     private fb: FormBuilder,
     private tokenService: TokenService,
     private consultaService: ConsultaService,
+    private consultorioService: ConsultoriosService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private authService: AuthService
@@ -42,11 +46,13 @@ export class ConsultaComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarConsultas();
+    this.cargarConsultorios();
   }
 
   private initializeForms() {
+    // Cambio principal: NO deshabilitar los campos desde el inicio
     this.createForm = this.fb.group({
-      id_consultorio: ['', Validators.required],
+      id: ['', Validators.required], // Removido el disabled: true
       id_medico: ['', Validators.required],
       id_paciente: ['', Validators.required],
       tipo: ['', Validators.required],
@@ -57,7 +63,7 @@ export class ConsultaComponent implements OnInit {
     });
 
     this.editForm = this.fb.group({
-      id_consultorio: ['', Validators.required],
+      id: ['', Validators.required], // Removido el disabled: true
       id_medico: ['', Validators.required],
       id_paciente: ['', Validators.required],
       tipo: ['', Validators.required],
@@ -85,7 +91,11 @@ export class ConsultaComponent implements OnInit {
     return this.tokenService.hasPermiso('delete_consulta');
   }
 
-  // ================== CARGAR CONSULTAS ==================
+  puedeLeerConsultorios(): boolean {
+    return this.tokenService.hasPermiso('read_consultorio');
+  }
+
+  // ================== CARGAR DATOS ==================
   cargarConsultas(): void {
     if (!this.puedeLeer()) {
       this.messageService.add({
@@ -118,6 +128,47 @@ export class ConsultaComponent implements OnInit {
     });
   }
 
+  cargarConsultorios(): void {
+    if (!this.puedeLeerConsultorios()) {
+      console.warn('No tienes permisos para ver consultorios');
+      return;
+    }
+
+    this.loadingConsultorios = true;
+
+    this.consultorioService.obtenerConsultorios().subscribe({
+      next: (data) => {
+        console.log('Consultorios cargados:', data); // Debug
+        this.consultorios = data;
+        this.loadingConsultorios = false;
+        
+        // Ya no es necesario habilitar los campos aquí
+        // porque ya están habilitados desde el inicio
+      },
+      error: (err) => {
+        this.loadingConsultorios = false;
+        console.error('Error al cargar consultorios:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los consultorios'
+        });
+      }
+    });
+  }
+
+  // ================== MÉTODOS AUXILIARES ==================
+  obtenerNombreConsultorio(idConsultorio: number): string {
+    const consultorio = this.consultorios.find(c => c.id === idConsultorio);
+    return consultorio ? consultorio.nombre : `Consultorio ${idConsultorio}`;
+  }
+
+  obtenerDetallesConsultorio(idConsultorio: number): string {
+    const consultorio = this.consultorios.find(c => c.id === idConsultorio);
+    return consultorio ? `${consultorio.nombre} - ${consultorio.tipo} (${consultorio.ubicacion})` : `Consultorio ${idConsultorio}`;
+  }
+
+  // ================== CRUD OPERATIONS ==================
   abrirDialogoCrear(): void {
     if (!this.puedeCrear()) {
       this.messageService.add({
@@ -130,6 +181,11 @@ export class ConsultaComponent implements OnInit {
 
     this.createForm.reset();
     this.displayCreateDialog = true;
+    
+    // Recargar consultorios si no están cargados
+    if (this.consultorios.length === 0) {
+      this.cargarConsultorios();
+    }
   }
 
   crearConsulta(): void {
@@ -142,7 +198,11 @@ export class ConsultaComponent implements OnInit {
       return;
     }
 
-    this.consultaService.crearConsulta(this.createForm.value).subscribe({
+    // Asegurar que el valor del consultorio sea un número
+    const formValue = { ...this.createForm.value };
+    formValue.id = parseInt(formValue.id, 10);
+
+    this.consultaService.crearConsulta(formValue).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -153,6 +213,7 @@ export class ConsultaComponent implements OnInit {
         this.cargarConsultas();
       },
       error: (err) => {
+        console.error('Error al crear consulta:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -189,6 +250,11 @@ export class ConsultaComponent implements OnInit {
     this.selectedConsulta = consulta;
     this.editForm.patchValue(consulta);
     this.displayEditDialog = true;
+    
+    // Recargar consultorios si no están cargados
+    if (this.consultorios.length === 0) {
+      this.cargarConsultorios();
+    }
   }
 
   actualizarConsulta(): void {
@@ -202,8 +268,12 @@ export class ConsultaComponent implements OnInit {
     }
 
     const id = this.selectedConsulta.id_consulta;
+    
+    // Asegurar que el valor del consultorio sea un número
+    const formValue = { ...this.editForm.value };
+    formValue.id = parseInt(formValue.id, 10);
 
-    this.consultaService.actualizarConsulta(id, this.editForm.value).subscribe({
+    this.consultaService.actualizarConsulta(id, formValue).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -214,6 +284,7 @@ export class ConsultaComponent implements OnInit {
         this.cargarConsultas();
       },
       error: (err) => {
+        console.error('Error al actualizar consulta:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',

@@ -12,7 +12,6 @@ export class TokenService {
   setToken(token: string): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.TOKEN_KEY, token);
-      console.log('Token guardado en localStorage:', token);
     }
   }
 
@@ -20,7 +19,6 @@ export class TokenService {
   getToken(): string | null {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem(this.TOKEN_KEY);
-      console.log('Token recuperado:', token);
       return token;
     }
     return null;
@@ -30,6 +28,11 @@ export class TokenService {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
     }
+  }
+
+  clearToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.PERMISOS_KEY);
   }
 
   isAuthenticated(): boolean {

@@ -27,7 +27,6 @@ export class AuthService {
   login(data: LoginData): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, data).pipe(
       tap((response: any) => {
-        console.log('Respuesta completa del login:', response);
 
         // Verificar si la respuesta tiene la estructura esperada
         if (response.Data && response.Data[0]) {
@@ -36,9 +35,6 @@ export class AuthService {
           this.tokenService.setToken(authData.access_token);
           localStorage.setItem('refresh_token', authData.refresh_token);
           this.tokenService.setPermisos(authData.permisos || []);
-          
-          console.log('Token establecido:', authData.access_token);
-          console.log('Permisos establecidos:', authData.permisos);
           
           this.router.navigate(['/dashboard']);
         } else {

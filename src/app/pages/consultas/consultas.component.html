@@ -1,4 +1,4 @@
-<!-- \src\app\pages\consultas\consultas.component.html -->
+<!-- src/app/pages/consultas/consultas.component.html -->
 <div class="container">
   <!-- Toolbar -->
   <div class="toolbar">
@@ -12,10 +12,16 @@
 
   <!-- Tabla de consultas -->
   <div class="table-container">
-    <table class="data-table">
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <span>Cargando consultas...</span>
+    </div>
+    
+    <table class="data-table" *ngIf="!loading">
       <thead>
         <tr>
           <th>ID</th>
+          <th>Consultorio</th>
           <th>Paciente</th>
           <th>Médico</th>
           <th>Tipo</th>
@@ -27,10 +33,15 @@
       <tbody>
         <tr *ngFor="let consulta of consultas">
           <td>{{ consulta.id_consulta }}</td>
+          <td>{{ obtenerNombreConsultorio(consulta.id_consultorio) }}</td>
           <td>{{ consulta.id_paciente }}</td>
           <td>{{ consulta.id_medico }}</td>
-          <td>{{ consulta.tipo }}</td>
-          <td>{{ consulta.fecha | date }}</td>
+          <td>
+            <span [class]="'badge badge-' + consulta.tipo.toLowerCase()">
+              {{ consulta.tipo }}
+            </span>
+          </td>
+          <td>{{ consulta.fecha | date:'dd/MM/yyyy' }}</td>
           <td>{{ consulta.hora }}</td>
           <td class="action-buttons">
             <button class="btn btn-info btn-sm" *ngIf="puedeLeer()" (click)="verConsulta(consulta)">
@@ -45,7 +56,7 @@
           </td>
         </tr>
         <tr *ngIf="consultas.length === 0">
-          <td colspan="7" class="text-center">No hay consultas registradas</td>
+          <td colspan="8" class="text-center">No hay consultas registradas</td>
         </tr>
       </tbody>
     </table>
@@ -63,26 +74,41 @@
         <div class="form-row">
           <div class="form-group">
             <label for="create_id_consultorio">Consultorio *</label>
-            <input type="number" id="create_id_consultorio" formControlName="id_consultorio">
+            <select id="create_id_consultorio" formControlName="id_consultorio" class="form-control">
+              <option value="">
+                {{ loadingConsultorios ? 'Cargando consultorios...' : 'Seleccione un consultorio' }}
+              </option>
+              <option *ngFor="let consultorio of consultorios" [value]="consultorio.id">
+                {{ consultorio.nombre }} - {{ consultorio.tipo }} ({{ consultorio.ubicacion }})
+              </option>
+            </select>
+            <div *ngIf="loadingConsultorios" class="loading-text">
+              <small>Cargando consultorios disponibles...</small>
+            </div>
+            <div *ngIf="createForm.get('id_consultorio')?.invalid && createForm.get('id_consultorio')?.touched" class="error-message">
+              <small>Por favor seleccione un consultorio</small>
+            </div>
           </div>
           
           <div class="form-group">
             <label for="create_id_medico">Médico *</label>
-            <input type="number" id="create_id_medico" formControlName="id_medico">
+            <input type="number" id="create_id_medico" formControlName="id_medico" 
+                   placeholder="ID del médico" class="form-control">
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
             <label for="create_id_paciente">Paciente *</label>
-            <input type="number" id="create_id_paciente" formControlName="id_paciente">
+            <input type="number" id="create_id_paciente" formControlName="id_paciente" 
+                   placeholder="ID del paciente" class="form-control">
           </div>
           
           <div class="form-group">
             <label for="create_tipo">Tipo *</label>
-            <select id="create_tipo" formControlName="tipo">
-              <option value="">Seleccione...</option>
-              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{tipo}}</option>
+            <select id="create_tipo" formControlName="tipo" class="form-control">
+              <option value="">Seleccione el tipo de consulta</option>
+              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{ tipo }}</option>
             </select>
           </div>
         </div>
@@ -90,23 +116,25 @@
         <div class="form-row">
           <div class="form-group">
             <label for="create_fecha">Fecha *</label>
-            <input type="date" id="create_fecha" formControlName="fecha">
+            <input type="date" id="create_fecha" formControlName="fecha" class="form-control">
           </div>
           
           <div class="form-group">
             <label for="create_hora">Hora *</label>
-            <input type="time" id="create_hora" formControlName="hora">
+            <input type="time" id="create_hora" formControlName="hora" class="form-control">
           </div>
         </div>
         
         <div class="form-group">
           <label for="create_diagnostico">Diagnóstico *</label>
-          <textarea id="create_diagnostico" formControlName="diagnostico" rows="3"></textarea>
+          <textarea id="create_diagnostico" formControlName="diagnostico" 
+                    rows="3" placeholder="Ingrese el diagnóstico" class="form-control"></textarea>
         </div>
         
         <div class="form-group">
           <label for="create_costo">Costo *</label>
-          <input type="number" step="0.01" id="create_costo" formControlName="costo">
+          <input type="number" step="0.01" id="create_costo" formControlName="costo" 
+                 placeholder="0.00" class="form-control">
         </div>
         
         <div class="dialog-footer">
@@ -129,26 +157,38 @@
         <div class="form-row">
           <div class="form-group">
             <label for="edit_id_consultorio">Consultorio *</label>
-            <input type="number" id="edit_id_consultorio" formControlName="id_consultorio">
+            <select id="edit_id_consultorio" formControlName="id_consultorio" class="form-control">
+              <option value="">
+                {{ loadingConsultorios ? 'Cargando consultorios...' : 'Seleccione un consultorio' }}
+              </option>
+              <option *ngFor="let consultorio of consultorios" [value]="consultorio.id">
+                {{ consultorio.nombre }} - {{ consultorio.tipo }} ({{ consultorio.ubicacion }})
+              </option>
+            </select>
+            <div *ngIf="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched" class="error-message">
+              <small>Por favor seleccione un consultorio</small>
+            </div>
           </div>
           
           <div class="form-group">
             <label for="edit_id_medico">Médico *</label>
-            <input type="number" id="edit_id_medico" formControlName="id_medico">
+            <input type="number" id="edit_id_medico" formControlName="id_medico" 
+                   placeholder="ID del médico" class="form-control">
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
             <label for="edit_id_paciente">Paciente *</label>
-            <input type="number" id="edit_id_paciente" formControlName="id_paciente">
+            <input type="number" id="edit_id_paciente" formControlName="id_paciente" 
+                   placeholder="ID del paciente" class="form-control">
           </div>
           
           <div class="form-group">
             <label for="edit_tipo">Tipo *</label>
-            <select id="edit_tipo" formControlName="tipo">
-              <option value="">Seleccione...</option>
-              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{tipo}}</option>
+            <select id="edit_tipo" formControlName="tipo" class="form-control">
+              <option value="">Seleccione el tipo de consulta</option>
+              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{ tipo }}</option>
             </select>
           </div>
         </div>
@@ -156,23 +196,25 @@
         <div class="form-row">
           <div class="form-group">
             <label for="edit_fecha">Fecha *</label>
-            <input type="date" id="edit_fecha" formControlName="fecha">
+            <input type="date" id="edit_fecha" formControlName="fecha" class="form-control">
           </div>
           
           <div class="form-group">
             <label for="edit_hora">Hora *</label>
-            <input type="time" id="edit_hora" formControlName="hora">
+            <input type="time" id="edit_hora" formControlName="hora" class="form-control">
           </div>
         </div>
         
         <div class="form-group">
           <label for="edit_diagnostico">Diagnóstico *</label>
-          <textarea id="edit_diagnostico" formControlName="diagnostico" rows="3"></textarea>
+          <textarea id="edit_diagnostico" formControlName="diagnostico" 
+                    rows="3" placeholder="Ingrese el diagnóstico" class="form-control"></textarea>
         </div>
         
         <div class="form-group">
           <label for="edit_costo">Costo *</label>
-          <input type="number" step="0.01" id="edit_costo" formControlName="costo">
+          <input type="number" step="0.01" id="edit_costo" formControlName="costo" 
+                 placeholder="0.00" class="form-control">
         </div>
         
         <div class="dialog-footer">
@@ -200,7 +242,7 @@
         <div class="detail-row">
           <div class="detail-item">
             <label><strong>Consultorio:</strong></label>
-            <p>{{ selectedConsulta.id_consultorio }}</p>
+            <p>{{ obtenerDetallesConsultorio(selectedConsulta.id_consultorio) }}</p>
           </div>
           
           <div class="detail-item">
@@ -217,14 +259,18 @@
           
           <div class="detail-item">
             <label><strong>Tipo:</strong></label>
-            <p>{{ selectedConsulta.tipo }}</p>
+            <p>
+              <span [class]="'badge badge-' + selectedConsulta.tipo.toLowerCase()">
+                {{ selectedConsulta.tipo }}
+              </span>
+            </p>
           </div>
         </div>
         
         <div class="detail-row">
           <div class="detail-item">
             <label><strong>Fecha:</strong></label>
-            <p>{{ selectedConsulta.fecha | date }}</p>
+            <p>{{ selectedConsulta.fecha | date:'dd/MM/yyyy' }}</p>
           </div>
           
           <div class="detail-item">
@@ -240,7 +286,7 @@
         
         <div class="detail-item">
           <label><strong>Costo:</strong></label>
-          <p>{{ selectedConsulta.costo | currency }}</p>
+          <p class="costo-text">{{ selectedConsulta.costo | currency:'USD':'symbol':'1.2-2' }}</p>
         </div>
       </div>
       

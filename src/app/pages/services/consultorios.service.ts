@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface Consultorio {
-  id_consultorio?: number;
+  id: number;
   id_medico: number;
   tipo: string;
   ubicacion: string;

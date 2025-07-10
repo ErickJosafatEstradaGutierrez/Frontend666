@@ -6,8 +6,6 @@ import { inject } from '@angular/core';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const token = tokenService.getToken();
-  
-  console.log('Interceptor - Token encontrado:', token);
 
   if (token) {
     const cloned = req.clone({

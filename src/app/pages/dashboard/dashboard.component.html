@@ -1,36 +1,68 @@
-<!-- \src\app\pages\dashboard\dashboard.component.html -->
 <div class="dashboard-container">
-  <!-- Sección de Expedientes -->
-  <section *ngIf="puedeLeerExpediente()" class="dashboard-section">
+
+  <!-- Cerrar Sesión -->
+  <div class="logout-container">
+    <button
+      pButton
+      type="button"
+      label="Cerrar sesión"
+      icon="pi pi-sign-out"
+      class="p-button-danger"
+      (click)="logout()"
+      [iconPos]="'left'">
+    </button>
+  </div>
+
+  <!-- 🔘 Botones -->
+  <div class="modulos-disponibles">
+    <p *ngIf="puedeLeerExpediente()">
+      <button 
+        pButton 
+        type="button" 
+        label="Ver Expedientes" 
+        icon="pi pi-folder"
+        (click)="toggleModule('expediente')" 
+        class="p-button-info" 
+        [iconPos]="'left'">
+      </button>
+    </p>
+
+    <p *ngIf="puedeLeerConsulta()">
+      <button 
+        pButton 
+        type="button" 
+        label="Ver Consultas" 
+        icon="pi pi-comments"
+        (click)="toggleModule('consulta')" 
+        class="p-button-success" 
+        [iconPos]="'left'">
+      </button>
+    </p>
+
+    <p *ngIf="puedeLeerReceta()">
+      <button 
+        pButton 
+        type="button" 
+        label="Ver Recetas" 
+        icon="pi pi-file"
+        (click)="toggleModule('receta')" 
+        class="p-button-warning" 
+        [iconPos]="'left'">
+      </button>
+    </p>
+  </div>
+
+  <!-- 🔽 Solo un módulo visible a la vez -->
+  <section *ngIf="selectedModule === 'expediente'" class="dashboard-section">
     <app-expediente></app-expediente>
   </section>
-  
-  <section *ngIf="!puedeLeerExpediente()" class="no-permission">
-    <p-card>
-      <p>No tienes permisos para ver el módulo de expedientes.</p>
-    </p-card>
-  </section>
 
-  <!-- Sección de Consultas -->
-  <section *ngIf="puedeLeerConsulta()" class="dashboard-section">
+  <section *ngIf="selectedModule === 'consulta'" class="dashboard-section">
     <app-consulta></app-consulta>
   </section>
-  
-  <section *ngIf="!puedeLeerConsulta()" class="no-permission">
-    <p-card>
-      <p>No tienes permisos para ver el módulo de consultas.</p>
-    </p-card>
-  </section>
 
-  <!-- Sección de Recetas -->
-  <section *ngIf="puedeLeerReceta()" class="dashboard-section">
+  <section *ngIf="selectedModule === 'receta'" class="dashboard-section">
     <app-recetas></app-recetas>
   </section>
-  
-  <section *ngIf="!puedeLeerReceta()" class="no-permission">
-    <p-card>
-      <p>No tienes permisos para ver el módulo de recetas.</p>
-    </p-card>
-  </section>
-  
+
 </div>

@@ -1,0 +1,90 @@
+/* ---------- CONTENEDOR PRINCIPAL ---------- */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ---------- BOTONES DE MÓDULOS ---------- */
+.modulos-disponibles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.modulos-disponibles button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(97, 209, 125, 0.69);
+}
+
+.modulos-disponibles button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+/* ---------- SECCIONES DEL DASHBOARD ---------- */
+.dashboard-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 4px 4px 6px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ---------- PERMISOS NO DISPONIBLES ---------- */
+.no-permission {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 6px;
+  color: #856404;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- ANIMACIONES ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.logout-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.logout-container button {
+  max-width: 200px; /* o como quieras limitar ancho */
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 3px 3px 8px rgb(176, 74, 74);
+}
+
+.logout-container button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
