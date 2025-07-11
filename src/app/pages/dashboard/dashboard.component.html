@@ -22,7 +22,7 @@
         label="Ver Expedientes" 
         icon="pi pi-folder"
         (click)="toggleModule('expediente')" 
-        class="p-button-info" 
+        class="p-button-expediente" 
         [iconPos]="'left'">
       </button>
     </p>
@@ -34,7 +34,7 @@
         label="Ver Consultas" 
         icon="pi pi-comments"
         (click)="toggleModule('consulta')" 
-        class="p-button-success" 
+        class="p-button-consulta" 
         [iconPos]="'left'">
       </button>
     </p>
@@ -46,11 +46,12 @@
         label="Ver Recetas" 
         icon="pi pi-file"
         (click)="toggleModule('receta')" 
-        class="p-button-warning" 
+        class="p-button-receta" 
         [iconPos]="'left'">
       </button>
     </p>
   </div>
+
 
   <!-- 🔽 Solo un módulo visible a la vez -->
   <section *ngIf="selectedModule === 'expediente'" class="dashboard-section">

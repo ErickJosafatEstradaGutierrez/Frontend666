@@ -1,11 +1,10 @@
-/* src/app/pages/expediente/expediente.component.css */
-
 /* ---------- CONTENEDOR PRINCIPAL ---------- */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-background);
 }
 
 /* ---------- TOOLBAR ---------- */
@@ -15,20 +14,25 @@
   margin-bottom: 20px;
 }
 
+/* ---------- BOTONES PERSONALIZADOS ---------- */
 .btn {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background-color: var(--color-primary);
+  color: white;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  opacity: 0.95;
   transform: translateY(-1px);
 }
 
@@ -38,61 +42,61 @@
 }
 
 .btn-success {
-  background-color: #28a745;
-  color: white;
+  background-color: var(--color-success);
 }
 
 .btn-secondary {
-  background-color: #6c757d;
-  color: white;
+  background-color: var(--color-secondary);
+  color: var(--color-text);
 }
 
 .btn-info {
-  background-color: #17a2b8;
+  background-color: var(--color-info);
   color: white;
 }
 
 .btn-warning {
-  background-color: #ffc107;
-  color: #212529;
-}
-
-.btn-danger {
-  background-color: #dc3545;
+  background-color: var(--color-warning);
   color: white;
 }
 
-/* ---------- TABLA DE DATOS ---------- */
+.btn-danger {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* ---------- TABLA DE DATOS (PRIMENG DATATABLE) ---------- */
 .table-container {
   overflow-x: auto;
 }
 
 .data-table {
+  @apply p-datatable;
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  background-color: white;
+  overflow: hidden;
 }
 
 .data-table thead {
-  background-color: #f0f4f8;
+  background-color: var(--color-secondary);
 }
 
 .data-table th {
   padding: 12px 15px;
-  text-align: left;
   font-weight: 600;
-  color: #0d47a1;
-  border-bottom: 2px solid #dee2e6;
+  color: var(--color-primary);
+  border-bottom: 2px solid rgba(var(--color-secondary-rgb), 0.5);
 }
 
 .data-table td {
   padding: 10px 15px;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.5);
+  color: var(--color-text);
 }
 
 .data-table tbody tr:hover {
-  background-color: #e3f2fd;
+  background-color: rgba(var(--color-primary-rgb), 0.05);
 }
 
 /* ---------- ACCIONES DE FILA ---------- */
@@ -101,14 +105,12 @@
   gap: 5px;
 }
 
-/* ---------- DIÁLOGOS ---------- */
+/* ---------- DIÁLOGOS (USANDO .p-dialog) ---------- */
 .dialog-overlay {
+  @apply p-dialog;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -122,13 +124,13 @@
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.3s ease-out;
 }
 
 .dialog-header {
   padding: 15px 20px;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -137,7 +139,7 @@
 .dialog-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .close-btn {
@@ -145,18 +147,18 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6c757d;
+  color: var(--color-accent);
 }
 
 .dialog-footer {
   padding: 15px 20px;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid rgba(var(--color-secondary-rgb), 0.5);
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-/* ---------- FORMULARIOS ---------- */
+/* ---------- FORMULARIOS PRIMENG ---------- */
 .form-group {
   margin-bottom: 15px;
   padding: 0 20px;
@@ -166,17 +168,20 @@
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
 }
 
 .form-group input[type="text"],
-.form-group textarea {
+.form-group textarea,
+.p-inputtext {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 6px;
   font-size: 14px;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s ease;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .form-group textarea {
@@ -184,15 +189,16 @@
   resize: vertical;
 }
 
+.p-inputtext:focus,
 .form-group input[type="text"]:focus,
 .form-group textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
   outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
 }
 
 .invalid {
-  border-color: #dc3545 !important;
+  border-color: var(--color-accent) !important;
 }
 
 /* ---------- DETALLES ---------- */
@@ -206,15 +212,15 @@
 
 .detail-item label {
   font-weight: 600;
-  color: #495057;
-  display: block;
+  color: var(--color-text);
   margin-bottom: 5px;
+  display: block;
 }
 
 .detail-item p {
   margin: 0;
   padding: 8px 12px;
-  background-color: #f8f9fa;
+  background-color: var(--color-secondary);
   border-radius: 4px;
 }
 
@@ -224,9 +230,62 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- ICONOS ---------- */
-.icon-plus:before { content: "+"; }
-.icon-refresh:before { content: "↻"; }
-.icon-eye:before { content: "👁"; }
-.icon-edit:before { content: "✏"; }
-.icon-trash:before { content: "🗑"; }
+/* ---------- ICONOS TEMPORALES (puedes usar PrimeIcons) ---------- */
+.icon-plus::before { content: "+"; }
+.icon-refresh::before { content: "↻"; }
+.icon-eye::before { content: "👁"; }
+.icon-edit::before { content: "✏"; }
+.icon-trash::before { content: "🗑"; }
+
+/* ---------- BOTONES DE ACCIONES GENERALES ---------- */
+
+/* Botón: Crear Nuevo */
+.p-button-crear {
+  background-color: #06b6d4 !important; /* Color info */
+  color: white !important;
+}
+.p-button-crear:hover {
+  background-color: #0891b2 !important;
+}
+
+/* Botón: Recargar Expedientes */
+.p-button-recargar {
+  background-color: #6366f1 !important; /* Azul violeta */
+  color: white !important;
+}
+.p-button-recargar:hover {
+  background-color: #4f46e5 !important;
+}
+
+/* ---------- BOTONES DENTRO DE LA TABLA (acciones por fila) ---------- */
+
+.btn-ver {
+  background-color: #06b6d4 !important; /* Info */
+  color: white !important;
+}
+.btn-ver:hover {
+  background-color: #0891b2 !important;
+}
+
+.btn-editar {
+  background-color: #f59e0b !important; /* Warning */
+  color: white !important;
+}
+.btn-editar:hover {
+  background-color: #d97706 !important;
+}
+
+.btn-eliminar {
+  background-color: #ef4444 !important; /* Danger */
+  color: white !important;
+}
+.btn-eliminar:hover {
+  background-color: #dc2626 !important;
+}
+
+/* Tamaño pequeño para botones dentro de celdas */
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}

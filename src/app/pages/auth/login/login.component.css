@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom right, #e3f2fd, #f0f4f8);
+  background: linear-gradient(to bottom right, #eafffa, #A1E3F9);
   padding: 1rem;
 }
 
@@ -11,10 +11,11 @@
   background: white;
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(54, 116, 181, 0.15);
   width: 100%;
   max-width: 420px;
   animation: fadeIn 0.5s ease-in-out;
+  border: 1px solid rgba(161, 227, 249, 0.3);
 }
 
 .login-header {
@@ -29,17 +30,18 @@
 
 .login-header h2 {
   margin: 0.5rem 0;
-  color: #1976d2;
+  color: #3674B5;
   font-size: 1.6rem;
 }
 
 .login-header span {
-  color: #0d47a1;
+  color: #578FCA;
 }
 
 .login-header p {
   font-size: 0.9rem;
-  color: #607d8b;
+  color: #050315;
+  opacity: 0.7;
 }
 
 .login-form {
@@ -56,21 +58,28 @@
 .form-group label {
   margin-bottom: 0.3rem;
   font-weight: 500;
-  color: #333;
+  color: #050315;
 }
 
 .form-group input {
   height: 40px;
   padding: 0 0.75rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s;
+  border: 1px solid #A1E3F9;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #eafffa;
+  color: #050315;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  border-color: #3674B5;
+  box-shadow: 0 0 0 2px rgba(54, 116, 181, 0.2);
+  background-color: white;
+}
+
+.form-group input::placeholder {
+  color: rgba(5, 3, 21, 0.5);
 }
 
 .btn-login {
@@ -79,13 +88,20 @@
   padding: 0.75rem;
   font-weight: bold;
   font-size: 1rem;
-  background-color: #1976d2;
+  background-color: #3674B5;
   color: white;
   border: none;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
 }
 
 .btn-login:hover {
-  background-color: #0d47a1;
+  background-color: #578FCA;
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(0);
 }
 
 .register-link {
@@ -94,17 +110,24 @@
 }
 
 .register-link a {
-  color: #1976d2;
+  color: #3674B5;
   font-size: 0.9rem;
   text-decoration: none;
+  transition: color 0.3s;
 }
 
 .register-link a:hover {
   text-decoration: underline;
-  color: #0d47a1;
+  color: #578FCA;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
 }

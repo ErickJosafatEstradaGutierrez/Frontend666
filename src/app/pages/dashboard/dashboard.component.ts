@@ -12,7 +12,6 @@ import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { ExpedienteComponent } from '../expediente/expediente.component';
-//import { ConsultoriosComponent } from '../consultorio/consultorio.component';
 import { ConsultaComponent } from '../consultas/consultas.component';
 import { RecetasComponent } from '../recetas/recetas.component';
 

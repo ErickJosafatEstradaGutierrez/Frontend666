@@ -56,6 +56,14 @@ export class ConsultaComponent implements OnInit {
     this.cargarPacientes();
   }
 
+  /*
+  ngOnCChanges(): void {
+    // Aquí podrías recargar los datos si es necesario
+    this.cargarConsultas();
+    this.cargarConsultorios();
+  }
+  */
+
   private initializeForms() {
     // Cambio principal: NO deshabilitar los campos desde el inicio
     this.createForm = this.fb.group({

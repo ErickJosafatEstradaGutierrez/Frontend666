@@ -1,36 +1,492 @@
+/* ---------- VARIABLES CSS PERSONALIZADAS ---------- */
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-rgb: 59, 130, 246;
+  --color-secondary: #f1f5f9;
+  --color-secondary-rgb: 241, 245, 249;
+  --color-accent: #ef4444;
+  --color-accent-rgb: 239, 68, 68;
+  --color-background: #ffffff;
+  --color-background-rgb: 255, 255, 255;
+  --color-text: #1e293b;
+  --color-text-rgb: 30, 41, 59;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-info: #06b6d4;
+}
+
+/* ---------- FONDO GLOBAL ---------- */
+body {
+  background-color: var(--color-background) !important;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html {
+  background-color: var(--color-background) !important;
+}
+
 /* ---------- CONTENEDOR PRINCIPAL ---------- */
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-background);
+  min-height: 100vh;
 }
 
-/* ---------- BOTONES DE MÓDULOS ---------- */
+/* ---------- BOTONES PRIMENG ---------- */
 .modulos-disponibles {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
-.modulos-disponibles button {
-  padding: 10px 20px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 6px rgba(97, 209, 125, 0.69);
+.modulos-disponibles p {
+  margin: 0;
 }
 
-.modulos-disponibles button:hover {
-  transform: translateY(-1px);
-  opacity: 0.95;
+/* Estilos base para botones PrimeNG */
+.p-button {
+  padding: 12px 24px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease-in-out !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.p-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.p-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.p-button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3) !important;
+}
+
+/* Botones específicos */
+.p-button-primary {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.p-button-primary:hover {
+  background-color: #2563eb !important;
+}
+
+.p-button-secondary {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+}
+
+.p-button-secondary:hover {
+  background-color: #e2e8f0 !important;
+}
+
+.p-button-success {
+  background-color: var(--color-success) !important;
+  color: white !important;
+}
+
+.p-button-success:hover {
+  background-color: #059669 !important;
+}
+
+.p-button-warning {
+  background-color: var(--color-warning) !important;
+  color: white !important;
+}
+
+.p-button-warning:hover {
+  background-color: #d97706 !important;
+}
+
+.p-button-danger {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+}
+
+.p-button-danger:hover {
+  background-color: #dc2626 !important;
+}
+
+.p-button-info {
+  background-color: var(--color-info) !important;
+  color: white !important;
+}
+
+.p-button-info:hover {
+  background-color: #0891b2 !important;
+}
+
+/* Botones outline */
+.p-button-outlined {
+  background-color: transparent !important;
+  border: 2px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+.p-button-outlined:hover {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+/* ---------- CARDS PRIMENG ---------- */
+.p-card {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(var(--color-secondary-rgb), 0.5) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  margin-bottom: 20px !important;
+  transition: all 0.3s ease !important;
+}
+
+.p-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+.p-card-header {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+.p-card-body {
+  padding: 20px !important;
+}
+
+.p-card-title {
+  color: var(--color-primary) !important;
+  margin-bottom: 12px !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.p-card-subtitle {
+  color: var(--color-text) !important;
+  opacity: 0.7 !important;
+  margin-bottom: 16px !important;
+}
+
+/* ---------- INPUTS PRIMENG ---------- */
+.p-inputtext {
+  border: 1px solid var(--color-secondary) !important;
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  padding: 12px 16px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.p-inputtext:focus {
+  outline: none !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2) !important;
+  background-color: white !important;
+}
+
+.p-inputtext:hover {
+  border-color: var(--color-primary) !important;
+}
+
+/* ---------- DROPDOWN PRIMENG ---------- */
+.p-dropdown {
+  background-color: var(--color-background) !important;
+  border: 1px solid var(--color-secondary) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+}
+
+.p-dropdown:hover {
+  border-color: var(--color-primary) !important;
+}
+
+.p-dropdown:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2) !important;
+}
+
+.p-dropdown-panel {
+  background-color: white !important;
+  border: 1px solid var(--color-secondary) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.p-dropdown-item {
+  padding: 12px 16px !important;
+  color: var(--color-text) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.p-dropdown-item:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1) !important;
+}
+
+.p-dropdown-item.p-highlight {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+/* ---------- TABLA PRIMENG ---------- */
+.p-datatable {
+  background-color: white !important;
+  border: 1px solid var(--color-secondary) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.p-datatable-header {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+.p-datatable-thead > tr > th {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  padding: 16px 12px !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+.p-datatable-tbody > tr > td {
+  padding: 14px 12px !important;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.2) !important;
+  color: var(--color-text) !important;
+}
+
+.p-datatable-tbody > tr:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.05) !important;
+}
+
+.p-datatable-tbody > tr:nth-child(even) {
+  background-color: rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+/* ---------- MENSAJES PRIMENG ---------- */
+.p-message {
+  border-radius: 6px !important;
+  padding: 16px 20px !important;
+  margin: 12px 0 !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.p-message-success {
+  background-color: rgba(var(--color-success), 0.1) !important;
+  color: var(--color-success) !important;
+  border-left: 4px solid var(--color-success) !important;
+}
+
+.p-message-error {
+  background-color: rgba(var(--color-accent-rgb), 0.1) !important;
+  color: var(--color-accent) !important;
+  border-left: 4px solid var(--color-accent) !important;
+}
+
+.p-message-warning {
+  background-color: rgba(var(--color-warning), 0.1) !important;
+  color: var(--color-warning) !important;
+  border-left: 4px solid var(--color-warning) !important;
+}
+
+.p-message-info {
+  background-color: rgba(var(--color-info), 0.1) !important;
+  color: var(--color-info) !important;
+  border-left: 4px solid var(--color-info) !important;
+}
+
+/* ---------- TOAST PRIMENG ---------- */
+.p-toast {
+  z-index: 9999 !important;
+}
+
+.p-toast-message {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  margin-bottom: 16px !important;
+}
+
+.p-toast-message-success {
+  background-color: var(--color-success) !important;
+  color: white !important;
+}
+
+.p-toast-message-error {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+}
+
+.p-toast-message-warning {
+  background-color: var(--color-warning) !important;
+  color: white !important;
+}
+
+.p-toast-message-info {
+  background-color: var(--color-info) !important;
+  color: white !important;
+}
+
+/* ---------- PANEL PRIMENG ---------- */
+.p-panel {
+  background-color: white !important;
+  border: 1px solid var(--color-secondary) !important;
+  border-radius: 8px !important;
+  margin-bottom: 20px !important;
+}
+
+.p-panel-header {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+  font-weight: 600 !important;
+}
+
+.p-panel-content {
+  padding: 20px !important;
+}
+
+/* ---------- ACCORDION PRIMENG ---------- */
+.p-accordion {
+  background-color: white !important;
+  border: 1px solid var(--color-secondary) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.p-accordion-header {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  transition: all 0.3s ease !important;
+}
+
+.p-accordion-header:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1) !important;
+}
+
+.p-accordion-header.p-highlight {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.p-accordion-content {
+  background-color: white !important;
+  padding: 20px !important;
+  border-top: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+/* ---------- DIALOG PRIMENG ---------- */
+.p-dialog {
+  background-color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.p-dialog-header {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  padding: 20px !important;
+  border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+}
+
+.p-dialog-content {
+  padding: 20px !important;
+}
+
+.p-dialog-footer {
+  padding: 16px 20px !important;
+  border-top: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+  background-color: var(--color-secondary) !important;
+}
+
+/* ---------- TOOLBAR PRIMENG ---------- */
+.p-toolbar {
+  background-color: var(--color-secondary) !important;
+  border: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  margin-bottom: 20px !important;
+}
+
+/* ---------- MENUBAR PRIMENG ---------- */
+.p-menubar {
+  background-color: var(--color-secondary) !important;
+  border: 1px solid rgba(var(--color-secondary-rgb), 0.3) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+}
+
+.p-menubar-root-list > .p-menuitem > .p-menuitem-link {
+  color: var(--color-text) !important;
+  padding: 12px 16px !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.p-menubar-root-list > .p-menuitem > .p-menuitem-link:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.1) !important;
+  color: var(--color-primary) !important;
+}
+
+/* ---------- BADGE PRIMENG ---------- */
+.p-badge {
+  background-color: var(--color-accent) !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.p-badge-success {
+  background-color: var(--color-success) !important;
+}
+
+.p-badge-warning {
+  background-color: var(--color-warning) !important;
+}
+
+.p-badge-info {
+  background-color: var(--color-info) !important;
+}
+
+/* ---------- PROGRESS BAR PRIMENG ---------- */
+.p-progressbar {
+  background-color: var(--color-secondary) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  height: 8px !important;
+}
+
+.p-progressbar-value {
+  background-color: var(--color-primary) !important;
+  transition: width 0.3s ease !important;
 }
 
 /* ---------- SECCIONES DEL DASHBOARD ---------- */
@@ -39,28 +495,50 @@
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 4px 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.1);
   animation: fadeIn 0.3s ease-out;
+  border: 1px solid rgba(var(--color-secondary-rgb), 0.3);
+  color: var(--color-text);
+}
+
+.dashboard-section h2,
+.dashboard-section h3,
+.dashboard-section h4 {
+  color: var(--color-primary);
+  margin-bottom: 16px;
 }
 
 /* ---------- PERMISOS NO DISPONIBLES ---------- */
 .no-permission {
   margin-top: 20px;
   padding: 20px;
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
+  background-color: rgba(var(--color-accent-rgb), 0.1);
+  border: 1px solid var(--color-accent);
   border-radius: 6px;
-  color: #856404;
+  color: var(--color-text);
   font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(var(--color-accent-rgb), 0.2);
+}
+
+.no-permission::before {
+  content: "⚠️ ";
+  color: var(--color-accent);
+  font-weight: bold;
 }
 
 /* ---------- ANIMACIONES ---------- */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+/* ---------- LOGOUT CONTAINER ---------- */
 .logout-container {
   position: absolute;
   top: 20px;
@@ -68,23 +546,242 @@
   z-index: 10;
 }
 
-.logout-container button {
-  max-width: 200px; /* o como quieras limitar ancho */
-  padding: 10px 20px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 3px 3px 8px rgb(176, 74, 74);
+.logout-container .p-button {
+  max-width: 200px;
 }
 
-.logout-container button:hover {
-  transform: translateY(-1px);
-  opacity: 0.95;
+/* ---------- ALERTAS Y MENSAJES LEGACY ---------- */
+.alert-success {
+  background-color: rgba(var(--color-success), 0.1);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+  border-left: 4px solid var(--color-success);
+  padding: 12px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.alert-error {
+  background-color: rgba(var(--color-accent-rgb), 0.1);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-left: 4px solid var(--color-accent);
+  padding: 12px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+/* ---------- FORZAR FONDO EN ELEMENTOS COMUNES ---------- */
+.app-root,
+.main-content,
+.wrapper,
+.container-fluid {
+  background-color: var(--color-background) !important;
+}
+
+/* ---------- ASEGURAR FONDO EN COMPONENTES ANGULAR ---------- */
+:host {
+  background-color: var(--color-background) !important;
+  display: block;
+  min-height: 100vh;
+}
+
+/* ---------- RESPONSIVE DESIGN ---------- */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 10px;
+  }
+  
+  .modulos-disponibles {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .p-button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .dashboard-section {
+    margin-top: 15px;
+    padding: 15px;
+  }
+  
+  .logout-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-bottom: 20px;
+  }
+}
+
+/* ---------- UTILIDADES ---------- */
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.mb-2 {
+  margin-bottom: 16px !important;
+}
+
+.mb-3 {
+  margin-bottom: 24px !important;
+}
+
+.mt-2 {
+  margin-top: 16px !important;
+}
+
+.mt-3 {
+  margin-top: 24px !important;
+}
+
+.p-2 {
+  padding: 16px !important;
+}
+
+.p-3 {
+  padding: 24px !important;
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+.flex {
+  display: flex !important;
+}
+
+.flex-column {
+  flex-direction: column !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.justify-content-center {
+  justify-content: center !important;
+}
+
+.gap-2 {
+  gap: 16px !important;
+}
+
+.gap-3 {
+  gap: 24px !important;
+}
+
+/* Estilos específicos para los botones de módulos */
+.modulos-disponibles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.modulos-disponibles p {
+  margin: 0;
+}
+
+.modulos-disponibles .p-button {
+  padding: 12px 24px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease-in-out !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-width: 200px; /* Ancho mínimo consistente */
+}
+
+.modulos-disponibles .p-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.modulos-disponibles .p-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mantener los colores originales */
+.modulos-disponibles .p-button-info {
+  background-color: var(--color-info) !important;
+  color: white !important;
+}
+
+.modulos-disponibles .p-button-info:hover {
+  background-color: #0891b2 !important;
+}
+
+.modulos-disponibles .p-button-success {
+  background-color: var(--color-success) !important;
+  color: white !important;
+}
+
+.modulos-disponibles .p-button-success:hover {
+  background-color: #059669 !important;
+}
+
+.modulos-disponibles .p-button-warning {
+  background-color: var(--color-warning) !important;
+  color: white !important;
+}
+
+.modulos-disponibles .p-button-warning:hover {
+  background-color: #d97706 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modulos-disponibles {
+    flex-direction: column;
+  }
+  
+  .modulos-disponibles .p-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Botón: Ver Expedientes */
+.p-button-expediente {
+  background-color: #3b82f6 !important; /* Azul */
+  color: white !important;
+}
+.p-button-expediente:hover {
+  background-color: #2563eb !important;
+}
+
+/* Botón: Ver Consultas */
+.p-button-consulta {
+  background-color: #10b981 !important; /* Verde */
+  color: white !important;
+}
+.p-button-consulta:hover {
+  background-color: #059669 !important;
+}
+
+/* Botón: Ver Recetas */
+.p-button-receta {
+  background-color: #f59e0b !important; /* Amarillo */
+  color: white !important;
+}
+.p-button-receta:hover {
+  background-color: #d97706 !important;
 }
 
