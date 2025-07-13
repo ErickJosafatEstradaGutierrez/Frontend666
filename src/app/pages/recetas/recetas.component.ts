@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { TokenService } from '../services/token.service';
 import { RecetaService } from '../../pages/services/receta.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { UsuarioService, Usuario } from '../services/usuarios.service';
+import { ConsultoriosService, Consultorio } from '../services/consultorios.service';
 
 @Component({
   selector: 'app-recetas',
@@ -16,6 +18,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class RecetasComponent implements OnInit {
   recetas: any[] = [];
+
+  medicos: Usuario[] = [];
+  pacientes: Usuario[] = [];
+  consultorios: Consultorio[] = [];
+
   selectedReceta: any = null;
 
   displayCreateDialog = false;
@@ -26,6 +33,8 @@ export class RecetasComponent implements OnInit {
   editForm!: FormGroup;
 
   constructor(
+    private usuarioService: UsuarioService,
+    private consultorioService: ConsultoriosService,
     private fb: FormBuilder,
     private tokenService: TokenService,
     private recetaService: RecetaService,
@@ -37,6 +46,9 @@ export class RecetasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarRecetas();
+    this.cargarMedicos();
+    this.cargarPacientes();
+    this.cargarConsultorios();
   }
 
   initForms() {
@@ -104,7 +116,14 @@ export class RecetasComponent implements OnInit {
   crearReceta() {
     if (this.createForm.invalid) return;
 
-    this.recetaService.crear(this.createForm.value).subscribe({
+    const formValue = { ...this.createForm.value };
+
+    // Conversión explícita a número
+    formValue.id_consultorio = Number(formValue.id_consultorio);
+    formValue.id_medico = Number(formValue.id_medico);
+    formValue.id_paciente = Number(formValue.id_paciente);
+
+    this.recetaService.crear(formValue).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Receta creada' });
         this.displayCreateDialog = false;
@@ -165,6 +184,43 @@ export class RecetasComponent implements OnInit {
       }
     });
   }
+
+  cargarMedicos() {
+    this.usuarioService.obtenerMedicos().subscribe({
+      next: (data) => this.medicos = data,
+      error: (err) => console.error('Error al cargar médicos:', err)
+    });
+  }
+
+  cargarPacientes() {
+    this.usuarioService.obtenerPacientes().subscribe({
+      next: (data) => this.pacientes = data,
+      error: (err) => console.error('Error al cargar pacientes:', err)
+    });
+  }
+
+  cargarConsultorios() {
+    this.consultorioService.obtenerConsultorios().subscribe({
+      next: (data) => this.consultorios = data,
+      error: (err) => console.error('Error al cargar consultorios:', err)
+    });
+  }
+
+  obtenerNombreMedico(id: number): string {
+    const medico = this.medicos.find(m => m.id === id);
+    return medico ? medico.nombre : `ID ${id}`;
+  }
+
+  obtenerNombrePaciente(id: number): string {
+    const paciente = this.pacientes.find(p => p.id === id);
+    return paciente ? paciente.nombre : `ID ${id}`;
+  }
+
+  obtenerNombreConsultorio(id: number): string {
+    const consultorio = this.consultorios.find(c => c.id === id);
+    return consultorio ? consultorio.nombre : `ID ${id}`;
+  }
+
 
   cerrarDialogos() {
     this.displayCreateDialog = false;

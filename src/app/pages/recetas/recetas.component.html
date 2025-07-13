@@ -25,9 +25,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let receta of recetas">
-          <td>{{ receta.id_consultorio }}</td>
-          <td>{{ receta.id_medico }}</td>
-          <td>{{ receta.id_paciente }}</td>
+          <td>{{ obtenerNombreConsultorio(receta.id_consultorio) }}</td>
+          <td>{{ obtenerNombreMedico(receta.id_medico) }}</td>
+          <td>{{ obtenerNombrePaciente(receta.id_paciente) }}</td>
           <td>{{ receta.fecha | date:'shortDate' }}</td>
           <td>{{ receta.medicamento }}</td>
           <td>{{ receta.dosis }}</td>
@@ -65,34 +65,37 @@
       </div>
       
       <form [formGroup]="createForm" (ngSubmit)="crearReceta()">
+        <!-- Consultorio -->
         <div class="form-group">
-          <label for="id_consultorio">ID Consultorio *</label>
-          <input 
-            type="text"
+          <label for="id_consultorio">Consultorio *</label>
+          <select 
             id="id_consultorio" 
             formControlName="id_consultorio"
-            placeholder="Ingrese el ID del consultorio"
             [class.invalid]="createForm.get('id_consultorio')?.invalid && createForm.get('id_consultorio')?.touched">
+            <option *ngFor="let c of consultorios" [value]="c.id">{{ c.nombre }}</option>
+          </select>
         </div>
-        
+
+        <!-- Médico -->
         <div class="form-group">
-          <label for="id_medico">ID Médico *</label>
-          <input 
-            type="text"
+          <label for="id_medico">Médico *</label>
+          <select 
             id="id_medico" 
             formControlName="id_medico"
-            placeholder="Ingrese el ID del médico"
             [class.invalid]="createForm.get('id_medico')?.invalid && createForm.get('id_medico')?.touched">
+            <option *ngFor="let m of medicos" [value]="m.id">{{ m.nombre }}</option>
+          </select>
         </div>
-        
+
+        <!-- Paciente -->
         <div class="form-group">
-          <label for="id_paciente">ID Paciente *</label>
-          <input 
-            type="text"
+          <label for="id_paciente">Paciente *</label>
+          <select 
             id="id_paciente" 
             formControlName="id_paciente"
-            placeholder="Ingrese el ID del paciente"
             [class.invalid]="createForm.get('id_paciente')?.invalid && createForm.get('id_paciente')?.touched">
+            <option *ngFor="let p of pacientes" [value]="p.id">{{ p.nombre }}</option>
+          </select>
         </div>
         
         <div class="form-group">
@@ -249,7 +252,7 @@
         
         <div class="detail-item">
           <label><strong>Médico:</strong></label>
-          <p>{{ selectedReceta.id_medico }}</p>
+          <p>{{ obtenerNombreMedico(selectedReceta.id_medico) }}</p>
         </div>
         
         <div class="detail-item">

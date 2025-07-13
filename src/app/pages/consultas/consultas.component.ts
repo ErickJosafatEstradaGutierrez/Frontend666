@@ -9,6 +9,7 @@ import { ConsultaService } from '../../pages/services/consultas.service';
 import { ConsultoriosService, Consultorio } from '../../pages/services/consultorios.service';
 import { UsuarioService, Usuario } from '../../pages/services/usuarios.service';
 
+
 @Component({
   selector: 'app-consulta',
   standalone: true,
@@ -215,7 +216,11 @@ export class ConsultaComponent implements OnInit {
 
     // Asegurar que el valor del consultorio sea un número
     const formValue = { ...this.createForm.value };
-  formValue.id_consultorio = parseInt(formValue.id_consultorio, 10);
+
+    formValue.id_consultorio = parseInt(formValue.id_consultorio, 10);
+    formValue.id_medico = parseInt(formValue.id_medico, 10);
+    formValue.id_paciente = parseInt(formValue.id_paciente, 10);
+    formValue.costo = parseFloat(formValue.costo);
 
     this.consultaService.crearConsulta(formValue).subscribe({
       next: () => {
