@@ -286,10 +286,6 @@ export class ConsultaComponent implements OnInit {
   }
 
   abrirDialogoEditar(consulta: any): void {
-  consulta.id_consultorio = parseInt(consulta.id_consultorio, 10);
-  consulta.id_medico = parseInt(consulta.id_medico, 10);
-  consulta.id_paciente = parseInt(consulta.id_paciente, 10);
-  consulta.costo = parseFloat(consulta.costo);
     if (!this.puedeActualizar()) {
       this.messageService.add({
         severity: 'warn',
@@ -299,8 +295,20 @@ export class ConsultaComponent implements OnInit {
       return;
     }
 
-    this.selectedConsulta = consulta;
-    this.editForm.patchValue(consulta);
+    // Crear una copia del objeto para evitar mutaciones
+    const consultaParaEditar = { ...consulta };
+    
+    // Asignar el ID correcto para el formulario
+    consultaParaEditar.id = consultaParaEditar.id_consulta;
+    
+    // Asegurar que los campos sean del tipo correcto
+    consultaParaEditar.id_consultorio = parseInt(consultaParaEditar.id_consultorio, 10);
+    consultaParaEditar.id_medico = parseInt(consultaParaEditar.id_medico, 10);
+    consultaParaEditar.id_paciente = parseInt(consultaParaEditar.id_paciente, 10);
+    consultaParaEditar.costo = parseFloat(consultaParaEditar.costo);
+
+    this.selectedConsulta = consultaParaEditar;
+    this.editForm.patchValue(consultaParaEditar);
     this.displayEditDialog = true;
     
     // Recargar consultorios si no están cargados
@@ -308,7 +316,8 @@ export class ConsultaComponent implements OnInit {
       this.cargarConsultorios();
     }
   }
-    mostrarEstadoFormulario() {
+
+  mostrarEstadoFormulario() {
     console.log('Estado del formulario:', this.editForm.status);
     console.log('Errores:', this.editForm.errors);
     console.log('Valores:', this.editForm.value);
