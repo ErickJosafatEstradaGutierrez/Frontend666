@@ -17,7 +17,6 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const requiredPermiso = route.data['requiredPermiso'];
   if (requiredPermiso && !tokenService.hasPermiso(requiredPermiso)) {
     console.warn(`Acceso denegado: falta el permiso '${requiredPermiso}'`);
-    // Mejor redirigir a una página de "acceso denegado" o mostrar notificación
     return router.navigate(['/dashboard'], {
       state: { error: `Falta el permiso: ${requiredPermiso}` }
     });

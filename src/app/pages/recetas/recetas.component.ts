@@ -7,11 +7,12 @@ import { RecetaService } from '../../pages/services/receta.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsuarioService, Usuario } from '../services/usuarios.service';
 import { ConsultoriosService, Consultorio } from '../services/consultorios.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-recetas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ToastModule],
   templateUrl: './recetas.component.html',
   styleUrls: ['./recetas.component.css'],
   providers: [ConfirmationService, MessageService]

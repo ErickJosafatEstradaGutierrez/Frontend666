@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
+import { UsuarioService, Usuario } from '../services/usuarios.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
@@ -32,6 +33,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 export class ExpedienteComponent implements OnInit {
   expedientes: any[] = [];
   selectedExpediente: any = null;
+  pacientes: Usuario[] = [];
   
   // Diálogos
   displayCreateDialog = false;
@@ -52,13 +54,15 @@ export class ExpedienteComponent implements OnInit {
     private expedienteService: ExpedienteService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private usuarioService: UsuarioService,
   ) {
     this.initializeForms();
   }
 
   ngOnInit() {
     this.cargarExpedientes();
+    this.cargarPacientes();
   }
 
   private initializeForms() {
@@ -153,7 +157,10 @@ export class ExpedienteComponent implements OnInit {
       return;
     }
 
-    const expedienteData = this.createForm.value;
+    const expedienteData = {
+      ...this.createForm.value,
+      id_paciente: Number(this.createForm.value.id_paciente),
+    };
     
     this.expedienteService.crearExpediente(expedienteData).subscribe({
       next: (response) => {
@@ -287,6 +294,18 @@ export class ExpedienteComponent implements OnInit {
     });
     // Opcional: redirigir al login
     // this.authService.logout();
+  }
+
+  cargarPacientes() {
+    this.usuarioService.obtenerPacientes().subscribe({
+      next: (data) => this.pacientes = data,
+      error: (err) => console.error('Error al cargar pacientes:', err)
+    });
+  }
+
+  obtenerNombrePaciente(id: number): string {
+    const paciente = this.pacientes.find(p => p.id === id);
+    return paciente ? paciente.nombre : `ID ${id}`;
   }
 
   cerrarDialogos() {

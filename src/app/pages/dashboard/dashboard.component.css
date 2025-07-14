@@ -785,3 +785,27 @@ html {
   background-color: #d97706 !important;
 }
 
+/* Botón: Ver Horario */
+.p-button-horario {
+  background-color: #578FCA !important; /* Color Accent */
+  color: white !important;
+}
+.p-button-horario:hover {
+  background-color: #3b6fa3 !important; /* Un tono más oscuro del Accent */
+}
+
+/* Botón: Consultorios -*/
+.p-button-consultorios {
+  background-color: #7e3af2 !important;         /* Púrpura vibrante */
+  color: white !important;
+  border: 1px solid #6c2bd9 !important;        /* Borde más oscuro */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 2px 4px rgba(126, 58, 242, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.p-button-consultorios:hover {
+  background-color: #6c2bd9 !important;        /* Púrpura más oscuro al hover */
+  box-shadow: 0 4px 8px rgba(126, 58, 242, 0.4) !important;
+  transform: translateY(-1px) !important;      /* Efecto de levitación sutil */
+}

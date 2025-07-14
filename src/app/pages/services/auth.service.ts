@@ -33,8 +33,10 @@ export class AuthService {
           const authData = response.Data[0];
           
           this.tokenService.setToken(authData.access_token);
-          localStorage.setItem('refresh_token', authData.refresh_token);
-          this.tokenService.setPermisos(authData.permisos || []);
+          localStorage.setItem(this.tokenService.REFRESH_TOKEN_KEY, authData.refresh_token);
+
+          //localStorage.setItem('refresh_token', authData.refresh_token);
+          //this.tokenService.setPermisos(authData.permisos || []);
           
           this.router.navigate(['/dashboard']);
         } else {
@@ -48,8 +50,10 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, data);
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {});
+  logout(): void {
+    this.tokenService.clearToken();
+    localStorage.removeItem(this.tokenService.REFRESH_TOKEN_KEY);
+    this.router.navigate(['/login']);
   }
 
 

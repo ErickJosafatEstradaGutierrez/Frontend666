@@ -1,12 +1,39 @@
 // \src\app\pages\services\token.service.ts
 import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenService {
   private readonly TOKEN_KEY = 'access_token';
-  private readonly PERMISOS_KEY = 'permisos';
+  //private readonly PERMISOS_KEY = 'permisos';
+  public  readonly REFRESH_TOKEN_KEY = 'refresh_token';
+
+  private decodeToken(token: string): any {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
+
+  // Obtener datos del usuario desde el token
+  getTokenData(): { id_usuario?: number, nombre?: string, rol?: string, permisos?: string[] } {
+    const token = this.getToken();
+    if (!token) return {};
+    return this.decodeToken(token) || {};
+  }
+  hasPermiso(nombrePermiso: string): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    
+    const decoded = this.decodeToken(token);
+    if (!decoded || !decoded.permisos) return false;
+    
+    return decoded.permisos.includes(nombrePermiso);
+  }
 
   // Almacenar token correctamente
   setToken(token: string): void {
@@ -31,8 +58,10 @@ export class TokenService {
   }
 
   clearToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.PERMISOS_KEY);
+  if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    }
   }
 
   isAuthenticated(): boolean {
@@ -53,19 +82,29 @@ export class TokenService {
 
   setPermisos(permisos: string[]): void {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(this.PERMISOS_KEY, JSON.stringify(permisos));
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, JSON.stringify(permisos));
     }
   }
 
   getPermisos(): string[] {
     if (typeof window !== 'undefined') {
-      const permisos = localStorage.getItem(this.PERMISOS_KEY);
+      const permisos = localStorage.getItem(this.REFRESH_TOKEN_KEY);
       return permisos ? JSON.parse(permisos) : [];
     }
     return [];
   }
-
-  hasPermiso(nombrePermiso: string): boolean {
-    return this.getPermisos().includes(nombrePermiso);
+  
+  // En token.service.ts
+  getRol(): string | undefined {
+    const token = this.getToken();
+    if (!token) return undefined;
+    
+    const decoded = this.decodeToken(token);
+    return decoded?.rol;
   }
+
+  isPaciente(): boolean {
+    return this.getRol() === 'paciente';
+  }
+
 }

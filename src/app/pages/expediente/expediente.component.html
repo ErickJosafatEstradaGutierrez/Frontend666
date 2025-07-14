@@ -36,7 +36,7 @@
       <tbody>
         <tr *ngFor="let expediente of expedientes">
           <td>{{ expediente.id_expediente }}</td>
-          <td>{{ expediente.id_paciente }}</td>
+          <td>{{ expediente.id_paciente }} - {{ obtenerNombrePaciente(expediente.id_paciente) }}</td>
           <td>{{ expediente.antecedentes | slice:0:30 }}...</td>
           <td>{{ expediente.historial }}</td>
           <td class="action-buttons">
@@ -78,15 +78,13 @@
       </div>
       
       <form [formGroup]="createForm" (ngSubmit)="crearExpediente()">
-        <div class="form-group">
-          <label for="id_paciente">ID Paciente *</label>
-          <input 
-            type="text"
-            id="id_paciente" 
-            formControlName="id_paciente"
-            placeholder="Ingrese el ID del paciente"
-            [class.invalid]="createForm.get('id_paciente')?.invalid && createForm.get('id_paciente')?.touched">
-        </div>
+          <div class="form-group">
+            <label for="create_id_paciente">Paciente *</label>
+            <select id="create_id_paciente" formControlName="id_paciente" class="form-control">
+              <option value="">Seleccione un paciente</option>
+              <option *ngFor="let paciente of pacientes" [value]="paciente.id">{{ paciente.nombre }}</option>
+            </select>
+          </div>
         
         <div class="form-group">
           <label for="antecedentes">Antecedentes *</label>
@@ -147,15 +145,27 @@
       </div>
       
       <form [formGroup]="editForm" (ngSubmit)="actualizarExpediente()">
+        <!--
         <div class="form-group">
           <label for="edit_id_paciente">ID Paciente *</label>
           <input 
             type="text"
             id="edit_id_paciente" 
+            readonly
             formControlName="id_paciente"
             placeholder="Ingrese el ID del paciente"
             [class.invalid]="editForm.get('id_paciente')?.invalid && editForm.get('id_paciente')?.touched">
         </div>
+        -->
+
+        <div class="form-group">
+          <label>Paciente</label>
+          <p class="readonly-field">
+            ID {{ editForm.get('id_paciente')?.value }} -
+            {{ editForm.get('id_paciente')?.value }}
+          </p>
+        </div>
+
         
         <div class="form-group">
           <label for="edit_antecedentes">Antecedentes *</label>

@@ -15,6 +15,7 @@ import { ExpedienteComponent } from '../expediente/expediente.component';
 import { ConsultaComponent } from '../consultas/consultas.component';
 import { RecetasComponent } from '../recetas/recetas.component';
 import { HorarioComponent } from '../horarios/horarios.component';
+import { ConsultoriosComponent } from '../consultorio/consultorio.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,7 +32,8 @@ import { HorarioComponent } from '../horarios/horarios.component';
     ExpedienteComponent,
     ConsultaComponent,
     RecetasComponent,
-    HorarioComponent
+    HorarioComponent,
+    ConsultoriosComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -41,10 +43,11 @@ export class DashboardComponent {
   mostrarConsulta = false;
   mostrarReceta = false;
   mostrarHorario = false;
+  mostrarConsultorios = false;
 
-  selectedModule: 'expediente' | 'consulta' | 'receta' | 'horario' | null = null;
+  selectedModule: 'expediente' | 'consulta' | 'receta' | 'horario' | 'consultorios' | null = null;
 
-  toggleModule(module: 'expediente' | 'consulta' | 'receta' | 'horario') {
+  toggleModule(module: 'expediente' | 'consulta' | 'receta' | 'horario' | 'consultorios') {
     if (this.selectedModule === module) {
       this.selectedModule = null; // Ocultar si se vuelve a presionar el mismo
     } else {
@@ -70,6 +73,10 @@ export class DashboardComponent {
     return this.tokenService.hasPermiso('add_horario');
   }
 
+  puedeCrearConsultorios(): boolean {
+    return this.tokenService.hasPermiso('add_consultorio');
+  }
+
   puedeLeerExpediente(): boolean {
     return this.tokenService.hasPermiso('read_expediente');
   }
@@ -84,6 +91,10 @@ export class DashboardComponent {
 
   puedeLeerHorario(): boolean {
     return this.tokenService.hasPermiso('read_horario');
+  }
+
+  puedeLeerConsultorios(): boolean {
+    return this.tokenService.hasPermiso('read_consultorio');
   }
 
   puedeActualizarExpediente(): boolean {
@@ -102,6 +113,10 @@ export class DashboardComponent {
     return this.tokenService.hasPermiso('update_horario');
   }
 
+  puedeActualizaConsultorios(): boolean {
+    return this.tokenService.hasPermiso('update_consultorio');
+  }
+
   puedeEliminarExpediente(): boolean {
     return this.tokenService.hasPermiso('delete_expediente');
   }
@@ -118,6 +133,10 @@ export class DashboardComponent {
     return this.tokenService.hasPermiso('delete_horario');
   }
 
+  puedeEliminarConsultorios(): boolean {
+    return this.tokenService.hasPermiso('delete_consultorio');
+  }
+
   // Métodos para mostrar secciones
   toggleExpediente() {
     this.mostrarExpediente = !this.mostrarExpediente;
@@ -130,8 +149,25 @@ export class DashboardComponent {
   toggleReceta() {
     this.mostrarReceta = !this.mostrarReceta;
   }
+  
   toggleHorario() {
     this.mostrarHorario = !this.mostrarHorario;
+  }
+
+  toggleConsultorios() {
+    this.mostrarConsultorios = !this.mostrarConsultorios;
+  }
+
+  get isPaciente(): boolean {
+    return this.tokenService.isPaciente();
+  }
+
+  get expedienteButtonText(): string {
+    return this.isPaciente ? 'Expediente' : 'Expedientes';
+  }
+
+  get recargarButtonText(): string {
+    return this.isPaciente ? 'Recargar Expediente' : 'Recargar Expedientes';
   }
 
   logout(): void {

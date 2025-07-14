@@ -27,7 +27,7 @@ import { CardModule } from 'primeng/card';
 @Component({
   selector: 'app-consulta',
   standalone: true,
-  imports: [CommonModule,
+  imports: [
             ReactiveFormsModule,
             CommonModule,
             TableModule,
@@ -107,7 +107,8 @@ export class ConsultaComponent implements OnInit {
     });
 
     this.editForm = this.fb.group({
-      id: ['', Validators.required], // Removido el disabled: true
+      id: ['', Validators.required],
+      id_consultorio: ['', Validators.required],
       id_medico: ['', Validators.required],
       id_paciente: ['', Validators.required],
       tipo: ['', Validators.required],
@@ -285,6 +286,10 @@ export class ConsultaComponent implements OnInit {
   }
 
   abrirDialogoEditar(consulta: any): void {
+  consulta.id_consultorio = parseInt(consulta.id_consultorio, 10);
+  consulta.id_medico = parseInt(consulta.id_medico, 10);
+  consulta.id_paciente = parseInt(consulta.id_paciente, 10);
+  consulta.costo = parseFloat(consulta.costo);
     if (!this.puedeActualizar()) {
       this.messageService.add({
         severity: 'warn',
@@ -303,9 +308,22 @@ export class ConsultaComponent implements OnInit {
       this.cargarConsultorios();
     }
   }
+    mostrarEstadoFormulario() {
+    console.log('Estado del formulario:', this.editForm.status);
+    console.log('Errores:', this.editForm.errors);
+    console.log('Valores:', this.editForm.value);
+  }
 
   actualizarConsulta(): void {
+  this.mostrarEstadoFormulario();
     if (this.editForm.invalid) {
+    console.log('Formulario inválido - Razones:');
+    Object.keys(this.editForm.controls).forEach(key => {
+      const control = this.editForm.get(key);
+      if (control?.invalid) {
+        console.log(`Campo ${key} es inválido. Errores:`, control.errors);
+      }
+    });
       this.messageService.add({
         severity: 'warn',
         summary: 'Formulario inválido',
@@ -314,11 +332,17 @@ export class ConsultaComponent implements OnInit {
       return;
     }
 
-    const id = this.selectedConsulta.id_consulta;
-    
-    // Asegurar que el valor del consultorio sea un número
     const formValue = { ...this.editForm.value };
-    formValue.id = parseInt(formValue.id, 10);
+    const id = formValue.id; // Usa el ID del formulario
+
+    // Convertir los campos numéricos
+    formValue.id_consultorio = parseInt(formValue.id_consultorio, 10);
+    formValue.id_medico = parseInt(formValue.id_medico, 10);
+    formValue.id_paciente = parseInt(formValue.id_paciente, 10);
+    formValue.costo = parseFloat(formValue.costo);
+
+    // Eliminar el campo id para no enviarlo duplicado
+    delete formValue.id;
 
     this.consultaService.actualizarConsulta(id, formValue).subscribe({
       next: () => {
@@ -331,11 +355,11 @@ export class ConsultaComponent implements OnInit {
         this.cargarConsultas();
       },
       error: (err) => {
-        console.error('Error al actualizar consulta:', err);
+        console.error('Error completo al actualizar:', err);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo actualizar la consulta'
+          detail: err.error?.error || 'No se pudo actualizar la consulta'
         });
       }
     });

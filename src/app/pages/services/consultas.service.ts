@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { catchError, throwError } from 'rxjs';
 
 export interface Consulta {
   id_consulta?: number;
@@ -42,7 +43,12 @@ export class ConsultaService {
 
   // Actualizar una consulta existente
   actualizarConsulta(id: number, consulta: Partial<Consulta>): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, consulta);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, consulta).pipe(
+      catchError(error => {
+        console.error('Error en servicio:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   // Eliminar una consulta

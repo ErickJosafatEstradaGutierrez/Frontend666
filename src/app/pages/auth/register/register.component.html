@@ -72,8 +72,17 @@
     <!-- Mostrar QR y código secreto si ya se registró -->
     <div *ngIf="qrUrl" class="qr-section">
       <p-card header="¡Registro exitoso!" subheader="Configura tu autenticación de dos factores" styleClass="card-success">
-        <ng-template pTemplate="title">
-          Escanea este código QR
+        <ng-template pTemplate="header">
+          <div class="flex justify-content-between align-items-center">
+            <span>Configuración 2FA</span>
+            <button 
+              pButton 
+              icon="pi pi-times" 
+              class="p-button-text p-button-rounded p-button-plain"
+              (click)="qrUrl = ''; registerForm.reset()"
+              routerLink="/login">
+            </button>
+          </div>
         </ng-template>
         <div style="text-align: center; margin-top: 1rem;">
           <img [src]="qrUrl" alt="Código QR TOTP" style="width: 200px; height: 200px;" />
@@ -81,14 +90,24 @@
           <p style="color: var(--text-color-secondary);">Usa una aplicación como <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong> o <strong>Authy</strong> para escanear este código.</p>
         </div>
         <ng-template pTemplate="footer">
-          <button 
-            pButton 
-            type="button" 
-            label="Continuar al login" 
-            icon="pi pi-sign-in" 
-            class="p-button-success"
-            routerLink="/login">
-          </button>
+          <div class="flex justify-content-between">
+            <button 
+              pButton 
+              type="button" 
+              label="Volver al registro" 
+              icon="pi pi-arrow-left" 
+              class="p-button-secondary"
+              (click)="qrUrl = ''; registerForm.reset()">
+            </button>
+            <button 
+              pButton 
+              type="button" 
+              label="Continuar al login" 
+              icon="pi pi-sign-in" 
+              class="p-button-success"
+              routerLink="/login">
+            </button>
+          </div>
         </ng-template>
       </p-card>
     </div>

@@ -19,7 +19,7 @@
       <button 
         pButton 
         type="button" 
-        label="Expedientes" 
+        [label]="expedienteButtonText" 
         icon="pi pi-folder"
         (click)="toggleModule('expediente')" 
         class="p-button-expediente" 
@@ -62,6 +62,18 @@
         [iconPos]="'left'">
       </button>
     </p>
+
+    <p *ngIf="puedeLeerConsultorios()">
+      <button 
+        pButton 
+        type="button" 
+        label="Consultorios" 
+        icon="pi pi-file"
+        (click)="toggleModule('consultorios')" 
+        class="p-button-consultorios" 
+        [iconPos]="'left'">
+      </button>
+    </p>
   </div>
 
 
@@ -80,6 +92,10 @@
 
   <section *ngIf="selectedModule === 'horario'" class="dashboard-section">
     <app-horario></app-horario>
+  </section>
+
+  <section *ngIf="selectedModule === 'consultorios'" class="dashboard-section">
+    <app-consultorios></app-consultorios>
   </section>
 
 </div>

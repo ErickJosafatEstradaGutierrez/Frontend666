@@ -7,25 +7,37 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
+import { UsuarioService, Usuario } from '../services/usuarios.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TokenService } from '../../pages/services/token.service';
 import { ConsultoriosService } from '../services/consultorios.service';
+// PrimeNG imports
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
+import { TextareaModule } from 'primeng/textarea';
+import { ToolbarModule } from 'primeng/toolbar';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-consultorios',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
+    CommonModule,
     TableModule,
     ButtonModule,
     DialogModule,
     InputTextModule,
+    InputNumberModule,
+    CalendarModule,
+    DropdownModule,
+    TextareaModule,
+    ToolbarModule,
     ConfirmDialogModule,
     ToastModule,
-    TooltipModule
+    CardModule
   ],
   templateUrl: './consultorio.component.html',
   styleUrls: ['./consultorio.component.css'],
@@ -35,11 +47,22 @@ export class ConsultoriosComponent implements OnInit {
   consultorios: any[] = [];
   selectedConsultorio: any = null;
   
+  medicos: Usuario[] = [];
+
   // Diálogos
   displayCreateDialog = false;
   displayEditDialog = false;
   displayViewDialog = false;
   
+  tiposConsultorio: string[] = [
+    'General',
+    'Especializado',
+    'Odontología',
+    'Pediatría',
+    'Cirugía'
+    // Add other types as needed
+  ];
+
   // Formularios
   createForm: FormGroup;
   editForm: FormGroup;
@@ -52,28 +75,30 @@ export class ConsultoriosComponent implements OnInit {
     private tokenService: TokenService,
     private consultoriosService: ConsultoriosService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private usuarioService: UsuarioService
   ) {
     this.createForm = this.fb.group({
-      id_medico: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
+      id_medico: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
       ubicacion: ['', [Validators.required]],
       nombre: ['', [Validators.required]],
-      telefono: ['', [Validators.required]]
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
     });
 
     this.editForm = this.fb.group({
-      id_consultorio: [''],
-      id_medico: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
+      id: [''],
+      id_medico: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
       ubicacion: ['', [Validators.required]],
       nombre: ['', [Validators.required]],
-      telefono: ['', [Validators.required]]
+      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
     });
   }
 
   ngOnInit() {
     this.cargarConsultorios();
+    this.cargarMedicos();
   }
 
   // =============== MÉTODOS DE PERMISOS ===============
@@ -95,6 +120,7 @@ export class ConsultoriosComponent implements OnInit {
 
   // =============== OPERACIONES CRUD ===============
   cargarConsultorios() {
+
     if (!this.puedeLeer()) {
       this.messageService.add({
         severity: 'warn',
@@ -107,6 +133,7 @@ export class ConsultoriosComponent implements OnInit {
     this.loading = true;
     this.consultoriosService.obtenerConsultorios().subscribe({
       next: (data) => {
+        console.log('Datos recibidos:', data);
         this.consultorios = data;
         this.loading = false;
       },
@@ -119,6 +146,20 @@ export class ConsultoriosComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Añade este método para cargar los médicos
+  cargarMedicos(): void {
+    this.usuarioService.obtenerMedicos().subscribe({
+      next: (data) => this.medicos = data,
+      error: (err) => console.error('Error al cargar médicos:', err)
+    });
+  }
+
+  // Añade este método auxiliar para mostrar el nombre del médico
+  obtenerNombreMedico(id: number): string {
+    const medico = this.medicos.find(m => m.id === id);
+    return medico ? medico.nombre : `ID ${id}`;
   }
 
   // ========== CREAR CONSULTORIO ==========
@@ -142,7 +183,12 @@ export class ConsultoriosComponent implements OnInit {
       return;
     }
 
-    this.consultoriosService.crearConsultorio(this.createForm.value).subscribe({
+    const formData = this.createForm.value;
+    
+    // Convertir id_medico a número
+    formData.id_medico = Number(formData.id_medico);
+
+    this.consultoriosService.crearConsultorio(formData).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -152,11 +198,12 @@ export class ConsultoriosComponent implements OnInit {
         this.displayCreateDialog = false;
         this.cargarConsultorios();
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error completo:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo crear el consultorio'
+          detail: error.error?.error || 'No se pudo crear el consultorio'
         });
       }
     });
@@ -179,18 +226,25 @@ export class ConsultoriosComponent implements OnInit {
 
   // ========== EDITAR CONSULTORIO ==========
   abrirDialogoEditar(consultorio: any) {
-    if (!this.puedeActualizar()) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Permiso denegado',
-        detail: 'No tienes permisos para editar consultorios'
-      });
-      return;
-    }
+      if (!this.puedeActualizar()) {
+          this.messageService.add({
+              severity: 'warn',
+              summary: 'Permiso denegado',
+              detail: 'No tienes permisos para editar consultorios'
+          });
+          return;
+      }
 
-    this.selectedConsultorio = consultorio;
-    this.editForm.patchValue(consultorio);
-    this.displayEditDialog = true;
+      this.selectedConsultorio = consultorio;
+      this.editForm.patchValue({
+          id: consultorio.id,
+          id_medico: consultorio.id_medico,
+          tipo: consultorio.tipo,
+          ubicacion: consultorio.ubicacion,
+          nombre: consultorio.nombre,
+          telefono: consultorio.telefono
+      });
+      this.displayEditDialog = true;
   }
 
   actualizarConsultorio() {
@@ -199,8 +253,19 @@ export class ConsultoriosComponent implements OnInit {
       return;
     }
 
-    const id = this.selectedConsultorio.id_consultorio;
-    this.consultoriosService.actualizarConsultorio(id, this.editForm.value).subscribe({
+    const formData = this.editForm.value;
+    const id = formData.id;
+
+    // Prepara los datos en el formato que espera el backend
+    const datosActualizados = {
+      id_medico: formData.id_medico,
+      tipo: formData.tipo,
+      ubicacion: formData.ubicacion,
+      nombre: formData.nombre,
+      telefono: formData.telefono
+    };
+
+    this.consultoriosService.actualizarConsultorio(id, datosActualizados).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
@@ -210,11 +275,12 @@ export class ConsultoriosComponent implements OnInit {
         this.displayEditDialog = false;
         this.cargarConsultorios();
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error al actualizar:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo actualizar el consultorio'
+          detail: error.error?.message || 'No se pudo actualizar el consultorio'
         });
       }
     });
@@ -235,7 +301,7 @@ export class ConsultoriosComponent implements OnInit {
       message: `¿Estás seguro de eliminar el consultorio ${consultorio.nombre}?`,
       header: 'Confirmar eliminación',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => this.eliminarConsultorio(consultorio.id_consultorio)
+      accept: () => this.eliminarConsultorio(consultorio.id)
     });
   }
 

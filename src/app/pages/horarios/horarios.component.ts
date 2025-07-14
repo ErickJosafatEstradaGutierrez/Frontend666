@@ -10,6 +10,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { UsuarioService, Usuario } from '../services/usuarios.service';
+import { ConsultoriosService, Consultorio } from '../services/consultorios.service';
 
 
 @Component({
@@ -32,7 +34,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 export class HorarioComponent implements OnInit {
   horarios: Horario[] = [];
 
+  medicos: Usuario[] = [];
   selectedHorario: Horario | null = null;
+  pacientes: Usuario[] = [];
+  consultorios: Consultorio[] = [];
 
   displayCreateDialog = false;
   displayEditDialog = false;
@@ -42,6 +47,8 @@ export class HorarioComponent implements OnInit {
   editForm!: FormGroup;
 
   constructor(
+    private usuarioService: UsuarioService,
+    private consultorioService: ConsultoriosService,
     private fb: FormBuilder,
     private horarioService: HorarioService,
     private tokenService: TokenService,
@@ -53,6 +60,9 @@ export class HorarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarHorarios();
+    this.cargarPacientes();
+    this.cargarMedicos();
+    this.cargarConsultorios();
   }
 
   initForms() {
@@ -109,6 +119,14 @@ export class HorarioComponent implements OnInit {
     });
   }
 
+  verHorario(horario: Horario) {
+    if (!this.puedeLeer()) {
+      this.messageService.add({ severity: 'warn', summary: 'Permiso denegado', detail: 'No puedes ver horarios' });
+      return;
+    }
+    this.selectedHorario = horario;
+    this.displayViewDialog = true;
+  }
 
   abrirDialogoCrear() {
     if (!this.puedeCrear()) {
@@ -185,6 +203,43 @@ export class HorarioComponent implements OnInit {
       }
     });
   }
+
+  cargarConsultorios() {
+    this.consultorioService.obtenerConsultorios().subscribe({
+      next: (data) => this.consultorios = data,
+      error: (err) => console.error('Error al cargar consultorios:', err)
+    });
+  }
+
+  cargarMedicos() {
+    this.usuarioService.obtenerMedicos().subscribe({
+      next: (data) => this.medicos = data,
+      error: (err) => console.error('Error al cargar médicos:', err)
+    });
+  }
+
+  cargarPacientes() {
+    this.usuarioService.obtenerPacientes().subscribe({
+      next: (data) => this.pacientes = data,
+      error: (err) => console.error('Error al cargar pacientes:', err)
+    });
+  }
+
+  obtenerNombreConsultorio(id: number): string {
+    const consultorio = this.consultorios.find(c => c.id === id);
+    return consultorio ? consultorio.nombre : `ID ${id}`;
+  }
+
+  obtenerNombrePaciente(id: number): string {
+    const paciente = this.pacientes.find(p => p.id === id);
+    return paciente ? paciente.nombre : `ID ${id}`;
+  }
+
+  obtenerNombreMedico(id: number): string {
+    const medico = this.medicos.find(m => m.id === id);
+    return medico ? medico.nombre : `ID ${id}`;
+  }
+
 
   cerrarDialogos() {
     this.displayCreateDialog = false;

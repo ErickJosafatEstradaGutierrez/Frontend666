@@ -155,6 +155,7 @@
       </div>
       
       <form [formGroup]="editForm" (ngSubmit)="actualizarHorario()">
+        <!--
         <div class="form-group">
           <label for="edit_id_consultorio">Consultorio *</label>
           <input 
@@ -164,26 +165,32 @@
             placeholder="Ingrese el ID del consultorio"
             [class.invalid]="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched">
         </div>
-        
+        -->
+
         <div class="form-group">
-          <label for="edit_id_medico">Médico *</label>
-          <input 
-            type="number"
-            id="edit_id_medico" 
-            formControlName="id_medico"
-            placeholder="Ingrese el ID del médico"
-            [class.invalid]="editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched">
+          <label>Consultorio</label>
+          <p class="readonly-field">
+            ID {{ editForm.get('id_consultorio')?.value }} -
+            {{ obtenerNombreConsultorio(editForm.get('id_consultorio')?.value) }}
+          </p>
         </div>
         
         <div class="form-group">
-          <label for="edit_id_consulta">Consulta</label>
-          <input 
-            type="number"
-            id="edit_id_consulta" 
-            formControlName="id_consulta"
-            placeholder="Ingrese el ID de la consulta (opcional)"
-            [class.invalid]="editForm.get('id_consulta')?.invalid && editForm.get('id_consulta')?.touched">
+          <label>Médico</label>
+          <p class="readonly-field">
+            ID {{ editForm.get('id_medico')?.value }} -
+            {{ obtenerNombreMedico(editForm.get('id_medico')?.value) }}
+          </p>
         </div>
+
+        
+        <div class="form-group">
+          <label>Número de onsulta</label>
+          <p class="readonly-field">
+            {{ editForm.get('id_consulta')?.value }}
+          </p>
+        </div>
+
         
         <div class="form-group">
           <label for="edit_turno">Turno *</label>

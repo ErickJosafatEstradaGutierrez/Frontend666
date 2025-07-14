@@ -1,4 +1,6 @@
 <!-- src/app/pages/consultas/consultas.component.html -->
+<p-toast></p-toast>
+
 <div class="container">
   <!-- Toolbar -->
   <div class="toolbar">
@@ -12,10 +14,7 @@
 
   <!-- Tabla de consultas -->
   <div class="table-container">
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner"></div>
-      <span>Cargando consultas...</span>
-    </div>
+    
     
     <table class="data-table" *ngIf="!loading">
       <thead>
@@ -150,88 +149,129 @@
   </div>
 
   <!-- Diálogo para editar consulta -->
-  <div class="dialog-overlay" *ngIf="displayEditDialog">
-    <div class="dialog">
-      <div class="dialog-header">
-        <h3>Editar Consulta</h3>
-        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+<!-- Diálogo para editar consulta -->
+<div class="dialog-overlay" *ngIf="displayEditDialog">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h3>Editar Consulta</h3>
+      <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+    </div>
+    
+    <form [formGroup]="editForm" (ngSubmit)="actualizarConsulta()">
+      <!-- Campo ID oculto -->
+      <input type="hidden" formControlName="id">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit_id_consultorio">Consultorio *</label>
+          <select id="edit_id_consultorio" formControlName="id_consultorio" class="form-control">
+            <option value="">Seleccione un consultorio</option>
+            <option *ngFor="let consultorio of consultorios" [value]="consultorio.id"
+                    [selected]="consultorio.id === editForm.value.id_consultorio">
+              {{ consultorio.nombre }} - {{ consultorio.tipo }} ({{ consultorio.ubicacion }})
+            </option>
+          </select>
+          <small *ngIf="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched" 
+                 class="error-message">
+            Por favor seleccione un consultorio
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="edit_id_medico">Médico *</label>
+          <select id="edit_id_medico" formControlName="id_medico" class="form-control">
+            <option value="">Seleccione un médico</option>
+            <option *ngFor="let medico of medicos" [value]="medico.id"
+                    [selected]="medico.id === editForm.value.id_medico">
+              {{ medico.nombre }}
+            </option>
+          </select>
+          <small *ngIf="editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched" 
+                 class="error-message">
+            Por favor seleccione un médico
+          </small>
+        </div>
       </div>
       
-      <form [formGroup]="editForm" (ngSubmit)="actualizarConsulta()">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="edit_id_consultorio">Consultorio *</label>
-            <select id="edit_id_consultorio" formControlName="id_consultorio" class="form-control">
-              <option value="">
-                {{ loadingConsultorios ? 'Cargando consultorios...' : 'Seleccione un consultorio' }}
-              </option>
-              <option *ngFor="let consultorio of consultorios" [value]="consultorio.id">
-                {{ consultorio.nombre }} - {{ consultorio.tipo }} ({{ consultorio.ubicacion }})
-              </option>
-            </select>
-            <div *ngIf="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched" class="error-message">
-              <small>Por favor seleccione un consultorio</small>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <select id="edit_id_medico" formControlName="id_medico" class="form-control">
-              <option value="">Seleccione un médico</option>
-              <option *ngFor="let medico of medicos" [value]="medico.id">{{ medico.nombre }}</option>
-            </select>
-
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit_id_paciente">Paciente *</label>
+          <select id="edit_id_paciente" formControlName="id_paciente" class="form-control">
+            <option value="">Seleccione un paciente</option>
+            <option *ngFor="let paciente of pacientes" [value]="paciente.id"
+                    [selected]="paciente.id === editForm.value.id_paciente">
+              {{ paciente.nombre }}
+            </option>
+          </select>
+          <small *ngIf="editForm.get('id_paciente')?.invalid && editForm.get('id_paciente')?.touched" 
+                 class="error-message">
+            Por favor seleccione un paciente
+          </small>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <select id="edit_id_paciente" formControlName="id_paciente" class="form-control">
-              <option value="">Seleccione un paciente</option>
-              <option *ngFor="let paciente of pacientes" [value]="paciente.id">{{ paciente.nombre }}</option>
-            </select>
 
-          </div>
-          
-          <div class="form-group">
-            <label for="edit_tipo">Tipo *</label>
-            <select id="edit_tipo" formControlName="tipo" class="form-control">
-              <option value="">Seleccione el tipo de consulta</option>
-              <option *ngFor="let tipo of tiposConsulta" [value]="tipo">{{ tipo }}</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label for="edit_tipo">Tipo *</label>
+          <select id="edit_tipo" formControlName="tipo" class="form-control">
+            <option value="">Seleccione el tipo de consulta</option>
+            <option *ngFor="let tipo of tiposConsulta" [value]="tipo"
+                    [selected]="tipo === editForm.value.tipo">
+              {{ tipo }}
+            </option>
+          </select>
+          <small *ngIf="editForm.get('tipo')?.invalid && editForm.get('tipo')?.touched" 
+                 class="error-message">
+            Por favor seleccione el tipo
+          </small>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="edit_fecha">Fecha *</label>
-            <input type="date" id="edit_fecha" formControlName="fecha" class="form-control">
-          </div>
-          
-          <div class="form-group">
-            <label for="edit_hora">Hora *</label>
-            <input type="time" id="edit_hora" formControlName="hora" class="form-control">
-          </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit_fecha">Fecha *</label>
+          <input type="date" id="edit_fecha" formControlName="fecha" class="form-control">
+          <small *ngIf="editForm.get('fecha')?.invalid && editForm.get('fecha')?.touched" 
+                 class="error-message">
+            Por favor ingrese una fecha válida
+          </small>
         </div>
         
         <div class="form-group">
-          <label for="edit_diagnostico">Diagnóstico *</label>
-          <textarea id="edit_diagnostico" formControlName="diagnostico" 
-                    rows="3" placeholder="Ingrese el diagnóstico" class="form-control"></textarea>
+          <label for="edit_hora">Hora *</label>
+          <input type="time" id="edit_hora" formControlName="hora" class="form-control">
+          <small *ngIf="editForm.get('hora')?.invalid && editForm.get('hora')?.touched" 
+                 class="error-message">
+            Por favor ingrese una hora válida
+          </small>
         </div>
-        
-        <div class="form-group">
-          <label for="edit_costo">Costo *</label>
-          <input type="number" step="0.01" id="edit_costo" formControlName="costo" 
-                 placeholder="0.00" class="form-control">
-        </div>
-        
-        <div class="dialog-footer">
-          <button type="button" class="btn btn-secondary" (click)="cerrarDialogos()">Cancelar</button>
-          <button type="submit" class="btn btn-warning" [disabled]="editForm.invalid">Actualizar</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="edit_diagnostico">Diagnóstico *</label>
+        <textarea id="edit_diagnostico" formControlName="diagnostico" 
+                  rows="3" placeholder="Ingrese el diagnóstico" class="form-control"></textarea>
+        <small *ngIf="editForm.get('diagnostico')?.invalid && editForm.get('diagnostico')?.touched" 
+               class="error-message">
+          Por favor ingrese un diagnóstico
+        </small>
+      </div>
+      
+      <div class="form-group">
+        <label for="edit_costo">Costo *</label>
+        <input type="number" step="0.01" id="edit_costo" formControlName="costo" 
+               placeholder="0.00" class="form-control">
+        <small *ngIf="editForm.get('costo')?.invalid && editForm.get('costo')?.touched" 
+               class="error-message">
+          Por favor ingrese un costo válido
+        </small>
+      </div>
+      
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarDialogos()">Cancelar</button>
+        <button type="submit" class="btn btn-warning" [disabled]="editForm.invalid">Actualizar</button>
+      </div>
+    </form>
   </div>
+</div>
 
   <!-- Diálogo para ver consulta -->
   <div class="dialog-overlay" *ngIf="displayViewDialog">

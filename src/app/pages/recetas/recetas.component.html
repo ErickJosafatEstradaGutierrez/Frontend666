@@ -1,3 +1,6 @@
+
+<p-toast></p-toast>
+
 <div class="container">
   <!-- Toolbar -->
   <div class="toolbar">
@@ -170,8 +173,8 @@
         <div class="form-group">
           <label>Consultorio</label>
           <p class="readonly-field">
+            ID {{ editForm.get('id_consultorio')?.value }} -
             {{ obtenerNombreConsultorio(editForm.get('id_consultorio')?.value) }} 
-            (ID {{ editForm.get('id_consultorio')?.value }})
           </p>
         </div>
 
