@@ -6,6 +6,12 @@ import { ExpedienteService } from '../services/expediente.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AuthService } from '../../pages/services/auth.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 
 @Component({
   selector: 'app-expediente',
@@ -13,6 +19,11 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TableModule,
+    DialogModule,
+    ButtonModule,
+    ToastModule,
+    ConfirmDialogModule
   ],
   templateUrl: './expediente.component.html',
   styleUrls: ['./expediente.component.css'],

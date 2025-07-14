@@ -1,100 +1,271 @@
+<!-- src/app/pages/horario/horario.component.html -->
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
 <div class="container">
+  <!-- Toolbar -->
   <div class="toolbar">
-    <button class="btn btn-success" (click)="abrirDialogoCrear()">+ Crear Horario</button>
-    <button class="btn btn-secondary" (click)="cargarHorarios()">↻ Recargar</button>
+    <button 
+      *ngIf="puedeCrear()"
+      class="btn btn-success"
+      (click)="abrirDialogoCrear()">
+      <i class="icon-plus"></i> Crear Nuevo Horario
+    </button>
+
+    <button 
+      class="btn btn-secondary"
+      (click)="cargarHorarios()">
+      <i class="icon-refresh"></i> Recargar Horarios
+    </button>
   </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Consultorio</th>
-        <th>Médico</th>
-        <th>Consulta</th>
-        <th>Turno</th>
-        <th>Día</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let h of horarios">
-        <td>{{ h.id_consultorio }}</td>
-        <td>{{ h.id_medico }}</td>
-        <td>{{ h.id_consulta ?? '—' }}</td>
-        <td>{{ h.turno }}</td>
-        <td>{{ h.dia }}</td>
-        <td class="action-buttons">
-          <button class="btn btn-warning btn-sm" (click)="abrirDialogoEditar(h)">✏</button>
-          <button class="btn btn-danger btn-sm" (click)="confirmarEliminacion(h)">🗑</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Tabla simplificada -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Consultorio</th>
+          <th>Médico</th>
+          <th>Consulta</th>
+          <th>Turno</th>
+          <th>Día</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let horario of horarios">
+          <td>{{ horario.id_consultorio }}</td>
+          <td>{{ horario.id_medico }}</td>
+          <td>{{ horario.id_consulta ?? '—' }}</td>
+          <td>{{ horario.turno }}</td>
+          <td>{{ horario.dia }}</td>
+          <td class="action-buttons">
+            <button 
+              *ngIf="puedeLeer()"
+              class="btn btn-info btn-sm"
+              (click)="verHorario(horario)">
+              <i class="icon-eye"></i>
+            </button>
+            
+            <button 
+              *ngIf="puedeActualizar()"
+              class="btn btn-warning btn-sm"
+              (click)="abrirDialogoEditar(horario)">
+              <i class="icon-edit"></i>
+            </button>
+            
+            <button 
+              *ngIf="puedeEliminar()"
+              class="btn btn-danger btn-sm"
+              (click)="confirmarEliminacion(horario)">
+              <i class="icon-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="horarios.length === 0">
+          <td colspan="6" class="text-center">No hay horarios registrados</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <!-- Crear diálogo -->
+  <!-- Diálogo para crear horario -->
   <div class="dialog-overlay" *ngIf="displayCreateDialog">
     <div class="dialog">
-      <h3>Nuevo Horario</h3>
+      <div class="dialog-header">
+        <h3>Crear Nuevo Horario</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
       <form [formGroup]="createForm" (ngSubmit)="crearHorario()">
         <div class="form-group">
-          <label>Consultorio</label>
-          <input formControlName="id_consultorio" type="number" required>
+          <label for="id_consultorio">Consultorio *</label>
+          <input 
+            type="number"
+            id="id_consultorio" 
+            formControlName="id_consultorio"
+            placeholder="Ingrese el ID del consultorio"
+            [class.invalid]="createForm.get('id_consultorio')?.invalid && createForm.get('id_consultorio')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Médico</label>
-          <input formControlName="id_medico" type="number" required>
+          <label for="id_medico">Médico *</label>
+          <input 
+            type="number"
+            id="id_medico" 
+            formControlName="id_medico"
+            placeholder="Ingrese el ID del médico"
+            [class.invalid]="createForm.get('id_medico')?.invalid && createForm.get('id_medico')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Consulta (opcional)</label>
-          <input formControlName="id_consulta" type="number">
+          <label for="id_consulta">Consulta</label>
+          <input 
+            type="number"
+            id="id_consulta" 
+            formControlName="id_consulta"
+            placeholder="Ingrese el ID de la consulta (opcional)"
+            [class.invalid]="createForm.get('id_consulta')?.invalid && createForm.get('id_consulta')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Turno</label>
-          <input formControlName="turno" type="text" required>
+          <label for="turno">Turno *</label>
+          <input 
+            type="text"
+            id="turno" 
+            formControlName="turno"
+            placeholder="Ingrese el turno"
+            [class.invalid]="createForm.get('turno')?.invalid && createForm.get('turno')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Día</label>
-          <input formControlName="dia" type="text" required>
+          <label for="dia">Día *</label>
+          <input 
+            type="text"
+            id="dia" 
+            formControlName="dia"
+            placeholder="Ingrese el día"
+            [class.invalid]="createForm.get('dia')?.invalid && createForm.get('dia')?.touched">
         </div>
-
+        
         <div class="dialog-footer">
-          <button class="btn btn-secondary" type="button" (click)="cerrarDialogos()">Cancelar</button>
-          <button class="btn btn-success" type="submit" [disabled]="createForm.invalid">Crear</button>
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="cerrarDialogos()">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-success"
+            [disabled]="createForm.invalid">
+            Crear
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Editar diálogo -->
+  <!-- Diálogo para editar horario -->
   <div class="dialog-overlay" *ngIf="displayEditDialog">
     <div class="dialog">
-      <h3>Editar Horario</h3>
+      <div class="dialog-header">
+        <h3>Editar Horario</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
       <form [formGroup]="editForm" (ngSubmit)="actualizarHorario()">
         <div class="form-group">
-          <label>Consultorio</label>
-          <input formControlName="id_consultorio" type="number" required>
+          <label for="edit_id_consultorio">Consultorio *</label>
+          <input 
+            type="number"
+            id="edit_id_consultorio" 
+            formControlName="id_consultorio"
+            placeholder="Ingrese el ID del consultorio"
+            [class.invalid]="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Médico</label>
-          <input formControlName="id_medico" type="number" required>
+          <label for="edit_id_medico">Médico *</label>
+          <input 
+            type="number"
+            id="edit_id_medico" 
+            formControlName="id_medico"
+            placeholder="Ingrese el ID del médico"
+            [class.invalid]="editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Consulta (opcional)</label>
-          <input formControlName="id_consulta" type="number">
+          <label for="edit_id_consulta">Consulta</label>
+          <input 
+            type="number"
+            id="edit_id_consulta" 
+            formControlName="id_consulta"
+            placeholder="Ingrese el ID de la consulta (opcional)"
+            [class.invalid]="editForm.get('id_consulta')?.invalid && editForm.get('id_consulta')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Turno</label>
-          <input formControlName="turno" type="text" required>
+          <label for="edit_turno">Turno *</label>
+          <input 
+            type="text"
+            id="edit_turno" 
+            formControlName="turno"
+            placeholder="Ingrese el turno"
+            [class.invalid]="editForm.get('turno')?.invalid && editForm.get('turno')?.touched">
         </div>
+        
         <div class="form-group">
-          <label>Día</label>
-          <input formControlName="dia" type="text" required>
+          <label for="edit_dia">Día *</label>
+          <input 
+            type="text"
+            id="edit_dia" 
+            formControlName="dia"
+            placeholder="Ingrese el día"
+            [class.invalid]="editForm.get('dia')?.invalid && editForm.get('dia')?.touched">
         </div>
-
+        
         <div class="dialog-footer">
-          <button class="btn btn-secondary" type="button" (click)="cerrarDialogos()">Cancelar</button>
-          <button class="btn btn-warning" type="submit" [disabled]="editForm.invalid">Actualizar</button>
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="cerrarDialogos()">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-warning"
+            [disabled]="editForm.invalid">
+            Actualizar
+          </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Diálogo para ver horario -->
+  <div class="dialog-overlay" *ngIf="displayViewDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Detalles del Horario</h3>
+        <button class="close-btn" (click)="cerrarDialogos()">&times;</button>
+      </div>
+      
+      <div *ngIf="selectedHorario" class="details-container">
+        <div class="detail-item">
+          <label><strong>Consultorio:</strong></label>
+          <p>{{ selectedHorario.id_consultorio }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Médico:</strong></label>
+          <p>{{ selectedHorario.id_medico }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Consulta:</strong></label>
+          <p>{{ selectedHorario.id_consulta || '—' }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Turno:</strong></label>
+          <p>{{ selectedHorario.turno }}</p>
+        </div>
+        
+        <div class="detail-item">
+          <label><strong>Día:</strong></label>
+          <p>{{ selectedHorario.dia }}</p>
+        </div>
+      </div>
+      
+      <div class="dialog-footer">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="cerrarDialogos()">
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 </div>
