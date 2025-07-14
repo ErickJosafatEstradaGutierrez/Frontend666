@@ -48,4 +48,9 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/register`, data);
   }
 
+  logout(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {});
+  }
+
+
 }

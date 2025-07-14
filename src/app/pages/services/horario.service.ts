@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Horario {
   id_horario?: number;
@@ -10,6 +11,10 @@ export interface Horario {
   id_consulta: number | null;
   turno: string;
   dia: string;
+}
+
+interface HorarioResponse {
+  data: Horario[];
 }
 
 @Injectable({
@@ -23,6 +28,7 @@ export class HorarioService {
   obtenerHorarios(): Observable<Horario[]> {
     return this.http.get<Horario[]>(this.apiUrl);
   }
+
 
   obtenerHorario(id: number): Observable<Horario> {
     return this.http.get<Horario>(`${this.apiUrl}/${id}`);

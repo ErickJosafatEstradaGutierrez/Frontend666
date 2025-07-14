@@ -72,7 +72,7 @@
             id="id_consultorio" 
             formControlName="id_consultorio"
             [class.invalid]="createForm.get('id_consultorio')?.invalid && createForm.get('id_consultorio')?.touched">
-            <option *ngFor="let c of consultorios" [value]="c.id">{{ c.nombre }}</option>
+            <option *ngFor="let c of consultorios" [value]="c.id">{{ c.id }} - {{ c.nombre }}</option>
           </select>
         </div>
 
@@ -83,7 +83,7 @@
             id="id_medico" 
             formControlName="id_medico"
             [class.invalid]="createForm.get('id_medico')?.invalid && createForm.get('id_medico')?.touched">
-            <option *ngFor="let m of medicos" [value]="m.id">{{ m.nombre }}</option>
+            <option *ngFor="let m of medicos" [value]="m.id"> {{ m.id }} - {{ m.nombre }}</option>
           </select>
         </div>
 
@@ -94,7 +94,7 @@
             id="id_paciente" 
             formControlName="id_paciente"
             [class.invalid]="createForm.get('id_paciente')?.invalid && createForm.get('id_paciente')?.touched">
-            <option *ngFor="let p of pacientes" [value]="p.id">{{ p.nombre }}</option>
+            <option *ngFor="let p of pacientes" [value]="p.id">{{ p.id }} - {{ p.nombre }}</option>
           </select>
         </div>
         
@@ -154,35 +154,43 @@
       </div>
       
       <form [formGroup]="editForm" (ngSubmit)="actualizarReceta()">
+        <!--
         <div class="form-group">
           <label for="edit_id_consultorio">ID Consultorio *</label>
           <input 
             type="text"
             id="edit_id_consultorio" 
             formControlName="id_consultorio"
+            [disabled]="true"
             placeholder="Ingrese el ID del consultorio"
             [class.invalid]="editForm.get('id_consultorio')?.invalid && editForm.get('id_consultorio')?.touched">
         </div>
-        
+        -->
+
         <div class="form-group">
-          <label for="edit_id_medico">ID Médico *</label>
-          <input 
-            type="text"
-            id="edit_id_medico" 
-            formControlName="id_medico"
-            placeholder="Ingrese el ID del médico"
-            [class.invalid]="editForm.get('id_medico')?.invalid && editForm.get('id_medico')?.touched">
+          <label>Consultorio</label>
+          <p class="readonly-field">
+            {{ obtenerNombreConsultorio(editForm.get('id_consultorio')?.value) }} 
+            (ID {{ editForm.get('id_consultorio')?.value }})
+          </p>
         </div>
-        
+
         <div class="form-group">
-          <label for="edit_id_paciente">ID Paciente *</label>
-          <input 
-            type="text"
-            id="edit_id_paciente" 
-            formControlName="id_paciente"
-            placeholder="Ingrese el ID del paciente"
-            [class.invalid]="editForm.get('id_paciente')?.invalid && editForm.get('id_paciente')?.touched">
+          <label>Médico</label>
+          <p class="readonly-field">
+            {{ obtenerNombreMedico(editForm.get('id_medico')?.value) }} 
+            (ID {{ editForm.get('id_medico')?.value }})
+          </p>
         </div>
+
+        <div class="form-group">
+          <label>Paciente</label>
+          <p class="readonly-field">
+            {{ obtenerNombrePaciente(editForm.get('id_paciente')?.value) }} 
+            (ID {{ editForm.get('id_paciente')?.value }})
+          </p>
+        </div>
+
         
         <div class="form-group">
           <label for="edit_fecha">Fecha *</label>

@@ -1,8 +1,9 @@
 <!-- register.component.html -->
+<p-toast></p-toast>
+
 <div class="register-container">
-  <div class="register-card">
+  <p-card class="register-card">
     <div class="register-header">
-      <!--<img src="assets/logo-medico.png" alt="Logo Menchaca" />-->
       <h2>Crea tu cuenta en <span>*pordeterminar*</span></h2>
       <p>Sistema de gestión médica</p>
     </div>
@@ -11,12 +12,15 @@
       <!-- Select de rol -->
       <div class="form-group">
         <label for="rol">Rol</label>
-        <select id="rol" formControlName="rol" pInputText>
-          <option value="" disabled selected>Seleccione un rol</option>
-          <option value="medico">Medico</option>
-          <option value="paciente">Paciente</option>
-          <option value="enfermera">Enfermera</option>
-        </select>
+        <p-dropdown 
+          id="rol" 
+          formControlName="rol" 
+          [options]="roles" 
+          optionLabel="name" 
+          optionValue="value"
+          placeholder="Seleccione un rol"
+          [style]="{width: '100%'}">
+        </p-dropdown>
       </div>
 
       <!-- Campos generales -->
@@ -28,7 +32,11 @@
           [id]="field.control"
           [formControlName]="field.control"
           [placeholder]="field.placeholder"
+          [class]="field.control === 'password' ? 'p-password-input' : ''"
         />
+        <small *ngIf="registerForm.get(field.control)?.invalid && registerForm.get(field.control)?.touched" class="p-error">
+          {{ getErrorMessage(field.control) }}
+        </small>
       </div>
 
       <!-- Campo especialidad si es medico -->
@@ -41,16 +49,18 @@
           formControlName="especialidad"
           placeholder="Cardiología"
         />
+        <small *ngIf="registerForm.get('especialidad')?.invalid && registerForm.get('especialidad')?.touched" class="p-error">
+          La especialidad es requerida para médicos
+        </small>
       </div>
 
-      <!-- Botón de registro solo se muestra si NO hay qrUrl -->
       <button
         *ngIf="!qrUrl"
         pButton
         type="submit"
         label="Registrarse"
         icon="pi pi-user-plus"
-        class="btn-register"
+        class="p-button-primary"
         [disabled]="registerForm.invalid"
       ></button>
 
@@ -59,19 +69,28 @@
       </div>
     </form>
 
-      <!-- Mostrar QR y código secreto si ya se registró -->
-      <div *ngIf="qrUrl" class="qr-card">
-        <p-card header="¡Registro exitoso!" subheader="Configura tu autenticación de dos factores" styleClass="card-success">
-          <ng-template pTemplate="title">
-            Escanea este código QR
-          </ng-template>
-          <div style="text-align: center; margin-top: 1rem;">
-            <img [src]="qrUrl" alt="Código QR TOTP" style="width: 200px; height: 200px;" />
-            <p style="margin-top: 1rem;"><strong>Secreto:</strong> {{ secret }}</p>
-            <p style="color: #607d8b;">Usa una aplicación como <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong> o <strong>Authy</strong> para escanear este código.</p>
-          </div>
-        </p-card>
-      </div>
-
-  </div>
+    <!-- Mostrar QR y código secreto si ya se registró -->
+    <div *ngIf="qrUrl" class="qr-section">
+      <p-card header="¡Registro exitoso!" subheader="Configura tu autenticación de dos factores" styleClass="card-success">
+        <ng-template pTemplate="title">
+          Escanea este código QR
+        </ng-template>
+        <div style="text-align: center; margin-top: 1rem;">
+          <img [src]="qrUrl" alt="Código QR TOTP" style="width: 200px; height: 200px;" />
+          <p style="margin-top: 1rem;"><strong>Secreto:</strong> {{ secret }}</p>
+          <p style="color: var(--text-color-secondary);">Usa una aplicación como <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong> o <strong>Authy</strong> para escanear este código.</p>
+        </div>
+        <ng-template pTemplate="footer">
+          <button 
+            pButton 
+            type="button" 
+            label="Continuar al login" 
+            icon="pi pi-sign-in" 
+            class="p-button-success"
+            routerLink="/login">
+          </button>
+        </ng-template>
+      </p-card>
+    </div>
+  </p-card>
 </div>

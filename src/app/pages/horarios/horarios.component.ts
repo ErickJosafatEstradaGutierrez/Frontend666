@@ -1,33 +1,57 @@
-// src/app/pages/horario/horario.component.ts
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HorarioService, Horario } from '../services/horario.service';
+import { TokenService } from '../services/token.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 
 @Component({
   selector: 'app-horario',
-  templateUrl: './horario.component.html',
-  styleUrls: ['./horario.component.css'],
-  providers: [MessageService, ConfirmationService]
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DialogModule,
+    ButtonModule,
+    InputTextModule,
+    DropdownModule,
+    ToastModule,
+    ConfirmDialogModule
+],
+  templateUrl: './horarios.component.html',
+  styleUrls: ['./horarios.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class HorarioComponent implements OnInit {
   horarios: Horario[] = [];
+
+  selectedHorario: Horario | null = null;
+
   displayCreateDialog = false;
   displayEditDialog = false;
-  selectedHorario: Horario | null = null;
+  displayViewDialog = false;
+
   createForm!: FormGroup;
   editForm!: FormGroup;
-  loading = false;
 
   constructor(
     private fb: FormBuilder,
     private horarioService: HorarioService,
+    private tokenService: TokenService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+    this.initForms();
+  }
 
   ngOnInit(): void {
-    this.initForms();
     this.cargarHorarios();
   }
 
@@ -41,6 +65,7 @@ export class HorarioComponent implements OnInit {
     });
 
     this.editForm = this.fb.group({
+      id_horario: [''],
       id_consultorio: ['', Validators.required],
       id_medico: ['', Validators.required],
       id_consulta: [null],
@@ -49,21 +74,47 @@ export class HorarioComponent implements OnInit {
     });
   }
 
+  // ================= PERMISOS =================
+  puedeLeer() {
+    return this.tokenService.hasPermiso('read_horario');
+  }
+
+  puedeCrear() {
+    return this.tokenService.hasPermiso('add_horario');
+  }
+
+  puedeActualizar() {
+    return this.tokenService.hasPermiso('update_horario');
+  }
+
+  puedeEliminar() {
+    return this.tokenService.hasPermiso('delete_horario');
+  }
+
+  // ================= CRUD =================
   cargarHorarios() {
-    this.loading = true;
+    if (!this.puedeLeer()) {
+      this.messageService.add({ severity: 'warn', summary: 'Permiso denegado', detail: 'No puedes ver horarios' });
+      return;
+    }
+
     this.horarioService.obtenerHorarios().subscribe({
       next: (data) => {
         this.horarios = data;
-        this.loading = false;
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al cargar horarios' });
-        this.loading = false;
+      error: (err) => {
+        console.error('Error al cargar horarios:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudieron cargar los horarios' });
       }
     });
   }
 
+
   abrirDialogoCrear() {
+    if (!this.puedeCrear()) {
+      this.messageService.add({ severity: 'warn', summary: 'Permiso denegado', detail: 'No puedes crear horarios' });
+      return;
+    }
     this.createForm.reset();
     this.displayCreateDialog = true;
   }
@@ -71,7 +122,10 @@ export class HorarioComponent implements OnInit {
   crearHorario() {
     if (this.createForm.invalid) return;
 
-    const data = this.createForm.value;
+    const data = { ...this.createForm.value };
+    data.id_consultorio = Number(data.id_consultorio);
+    data.id_medico = Number(data.id_medico);
+
     this.horarioService.crearHorario(data).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Horario creado' });
@@ -85,33 +139,36 @@ export class HorarioComponent implements OnInit {
   }
 
   abrirDialogoEditar(horario: Horario) {
+    if (!this.puedeActualizar()) return;
     this.selectedHorario = horario;
     this.editForm.patchValue(horario);
     this.displayEditDialog = true;
   }
 
   actualizarHorario() {
-    if (!this.selectedHorario || this.editForm.invalid) return;
+    if (this.editForm.invalid || !this.selectedHorario) return;
 
     const id = this.selectedHorario.id_horario!;
     const data = this.editForm.value;
 
     this.horarioService.actualizarHorario(id, data).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Horario actualizado' });
+        this.messageService.add({ severity: 'success', summary: 'Actualizado', detail: 'Horario actualizado' });
         this.displayEditDialog = false;
         this.cargarHorarios();
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el horario' });
       }
     });
   }
 
   confirmarEliminacion(horario: Horario) {
+    if (!this.puedeEliminar()) return;
+
     this.confirmationService.confirm({
       message: `¿Eliminar horario del día ${horario.dia} (${horario.turno})?`,
-      header: 'Confirmar',
+      header: 'Confirmación',
       icon: 'pi pi-exclamation-triangle',
       accept: () => this.eliminarHorario(horario.id_horario!)
     });
@@ -120,11 +177,11 @@ export class HorarioComponent implements OnInit {
   eliminarHorario(id: number) {
     this.horarioService.eliminarHorario(id).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Horario eliminado' });
+        this.messageService.add({ severity: 'success', summary: 'Eliminado', detail: 'Horario eliminado' });
         this.cargarHorarios();
       },
       error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar el horario' });
       }
     });
   }
@@ -132,6 +189,7 @@ export class HorarioComponent implements OnInit {
   cerrarDialogos() {
     this.displayCreateDialog = false;
     this.displayEditDialog = false;
+    this.displayViewDialog = false;
     this.selectedHorario = null;
   }
 }

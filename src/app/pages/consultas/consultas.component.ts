@@ -8,15 +8,43 @@ import { AuthService } from '../../pages/services/auth.service';
 import { ConsultaService } from '../../pages/services/consultas.service';
 import { ConsultoriosService, Consultorio } from '../../pages/services/consultorios.service';
 import { UsuarioService, Usuario } from '../../pages/services/usuarios.service';
+import { provideAnimations } from '@angular/platform-browser/animations';
+// PrimeNG imports
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
+import { TextareaModule } from 'primeng/textarea';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { CardModule } from 'primeng/card';
 
 
 @Component({
   selector: 'app-consulta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule,
+            ReactiveFormsModule,
+            CommonModule,
+            TableModule,
+            ButtonModule,
+            DialogModule,
+            InputTextModule,
+            InputNumberModule,
+            CalendarModule,
+            DropdownModule,
+            TextareaModule,
+            ToolbarModule,
+            ConfirmDialogModule,
+            ToastModule,
+            CardModule],
   templateUrl: './consultas.component.html',
   styleUrls: ['./consultas.component.css'],
-  providers: [ConfirmationService, MessageService]
+  providers: [ConfirmationService, MessageService, provideAnimations()]
 })
 export class ConsultaComponent implements OnInit {
   consultas: any[] = [];
@@ -154,7 +182,6 @@ export class ConsultaComponent implements OnInit {
 
     this.consultorioService.obtenerConsultorios().subscribe({
       next: (data) => {
-        console.log('Consultorios cargados:', data); // Debug
         this.consultorios = data;
         this.loadingConsultorios = false;
         
@@ -365,7 +392,7 @@ export class ConsultaComponent implements OnInit {
       summary: 'Sesión expirada',
       detail: 'Por favor vuelve a iniciar sesión'
     });
-    // this.authService.logout(); // Habilita esto si deseas cerrar sesión automáticamente
+    this.authService.logout(); // Habilita esto si deseas cerrar sesión automáticamente
   }
 
   cargarMedicos(): void {

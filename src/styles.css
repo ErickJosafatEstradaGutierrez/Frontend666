@@ -6,3 +6,77 @@
   --color-background: #EAFFFA;
   --color-text: #050315;
 }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* === Títulos === */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: 0.25rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  border-left: 4px solid var(--color-accent);
+  padding-left: 0.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  font-size: 1rem;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+/* === Clases para texto especializado === */
+.label-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.small-text {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.text-important {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.text-success {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.text-info {
+  color: var(--color-accent);
+}
+
+.table-text {
+  font-size: 0.95rem;
+  color: #444;
+}

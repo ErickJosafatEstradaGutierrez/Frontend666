@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom right, #e3f2fd, #f0f4f8);
+  background: linear-gradient(to bottom right, var(--color-background), var(--color-secondary));
   padding: 1rem;
 }
 
@@ -11,10 +11,11 @@
   background: white;
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 30px rgba(54, 116, 181, 0.15);
   width: 100%;
   max-width: 500px;
   animation: fadeIn 0.5s ease-in-out;
+  border: 1px solid rgba(161, 227, 249, 0.3);
 }
 
 .register-header {
@@ -29,23 +30,24 @@
 
 .register-header h2 {
   margin: 0.5rem 0;
-  color: #1976d2;
+  color: var(--color-primary);
   font-size: 1.6rem;
 }
 
 .register-header span {
-  color: #0d47a1;
+  color: var(--color-accent);
 }
 
 .register-header p {
   font-size: 0.9rem;
-  color: #607d8b;
+  color: var(--color-text);
+  opacity: 0.7;
 }
 
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .form-group {
@@ -56,23 +58,49 @@
 .form-group label {
   margin-bottom: 0.3rem;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
 }
 
-.form-group input {
-  height: 40px;
-  padding: 0 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+
+.p-inputtext::placeholder {
+  color: rgba(5, 3, 21, 0.5);
 }
 
-.btn-register {
-  width: 100%;
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-weight: bold;
-  background-color: #1976d2;
-  color: white;
+/* Estilos específicos para el dropdown */
+.p-dropdown-panel {
+  z-index: 1000 !important;
+  position: absolute !important;
+  background: white !important;
+  border: 1px solid var(--color-secondary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+.p-dropdown-items {
+  padding: 0.5rem 0 !important;
+}
+
+.p-dropdown-item {
+  padding: 0.75rem 1rem !important;
+  color: var(--color-text) !important;
+}
+
+.p-dropdown-item:hover {
+  background: var(--color-background) !important;
+}
+
+.p-dropdown-item.p-highlight {
+  background: var(--color-primary) !important;
+  color: white !important;
+}
+
+.p-dropdown:not(.p-disabled):hover {
+  border-color: var(--color-primary) !important;
+}
+
+.p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: 0 0 0 2px rgba(54, 116, 181, 0.2) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .register-link {
@@ -81,18 +109,20 @@
 }
 
 .register-link a {
+  color: var(--color-primary);
+  font-size: 0.9rem;
   text-decoration: none;
-  color: #1976d2;
+  transition: color 0.3s;
 }
 
 .register-link a:hover {
   text-decoration: underline;
-  color: #0d47a1;
+  color: var(--color-accent);
 }
 
 .qr-section {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .qr-section img {
@@ -101,15 +131,85 @@
   height: 200px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+.card-success {
+  border-left: 4px solid var(--color-success) !important;
 }
 
-.form-group select {
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+.p-error {
+  color: var(--color-error);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.p-inputtext:enabled:hover, .p-password-input:enabled:hover {
+  border-color: var(--color-primary);
+}
+
+.p-inputtext:enabled:focus, .p-password-input:enabled:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(54, 116, 181, 0.2);
+  background-color: white;
+}
+
+.p-inputtext::placeholder, .p-password-input::placeholder {
+  color: rgba(5, 3, 21, 0.5);
+  font-size: 0.9rem;
+}
+
+/* Estilo específico para el campo de contraseña */
+
+/* Estilos unificados para todos los campos de entrada (texto, dropdown, password) */
+.p-inputtext,
+.p-dropdown,
+.p-password-input {
+  width: 100%;
   height: 40px;
   padding: 0 0.75rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-secondary);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: var(--color-background);
+  color: var(--color-text);
   font-size: 1rem;
+}
+
+.p-inputtext:enabled:hover,
+.p-password-input:enabled:hover {
+  border-color: var(--color-primary);
+}
+
+.p-inputtext:enabled:focus,
+.p-password-input:enabled:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(54, 116, 181, 0.2);
+  background-color: white;
+}
+
+.p-inputtext::placeholder,
+.p-password-input::placeholder {
+  color: rgba(5, 3, 21, 0.5);
+  font-size: 0.9rem;
+}
+
+/* Estilo específico para campos de contraseña */
+.p-password,
+.p-password.p-component {
+  width: 100%;
+}
+
+.p-password-input {
+  padding-right: 2.5rem; /* Espacio para el icono */
 }

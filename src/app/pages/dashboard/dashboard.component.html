@@ -19,7 +19,7 @@
       <button 
         pButton 
         type="button" 
-        label="Ver Expedientes" 
+        label="Expedientes" 
         icon="pi pi-folder"
         (click)="toggleModule('expediente')" 
         class="p-button-expediente" 
@@ -31,7 +31,7 @@
       <button 
         pButton 
         type="button" 
-        label="Ver Consultas" 
+        label="Consultas" 
         icon="pi pi-comments"
         (click)="toggleModule('consulta')" 
         class="p-button-consulta" 
@@ -43,10 +43,22 @@
       <button 
         pButton 
         type="button" 
-        label="Ver Recetas" 
+        label="Recetas" 
         icon="pi pi-file"
         (click)="toggleModule('receta')" 
         class="p-button-receta" 
+        [iconPos]="'left'">
+      </button>
+    </p>
+
+    <p *ngIf="puedeLeerHorario()">
+      <button 
+        pButton 
+        type="button" 
+        label="Horarios" 
+        icon="pi pi-file"
+        (click)="toggleModule('horario')" 
+        class="p-button-horario" 
         [iconPos]="'left'">
       </button>
     </p>
@@ -64,6 +76,10 @@
 
   <section *ngIf="selectedModule === 'receta'" class="dashboard-section">
     <app-recetas></app-recetas>
+  </section>
+
+  <section *ngIf="selectedModule === 'horario'" class="dashboard-section">
+    <app-horario></app-horario>
   </section>
 
 </div>

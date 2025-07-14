@@ -1,4 +1,3 @@
-//login.component.ts
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -11,6 +10,10 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { TokenService } from '../../services/token.service';
 import { Router } from '@angular/router';
+import { PasswordModule } from 'primeng/password';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -23,17 +26,26 @@ import { Router } from '@angular/router';
     InputTextModule,
     CardModule,
     MessageModule,
-    MessagesModule
+    MessagesModule,
+    PasswordModule,
+    ToastModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
+  providers: [MessageService],
 })
 export class LoginComponent {
   loginForm: FormGroup;
   mensajeError: string = '';
   mensajesError: any[] = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private tokenService: TokenService, private router: Router) {
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private tokenService: TokenService, 
+    private router: Router,
+    private messageService: MessageService
+  ) {
     this.loginForm = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -42,29 +54,32 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    console.log('onSubmit ejecutado');
-    if (this.loginForm.invalid) {
-      console.log('Formulario inválido', this.loginForm.value);
-      return;
-    }
-    if (this.loginForm.invalid) return;
-
-    this.authService.login(this.loginForm.value).subscribe({
-      next: (resp) => {
-        const data = resp.Data?.[0];
-
-        this.tokenService.setToken(data.access_token);
-        this.tokenService.setPermisos(data.permisos);
-
-        console.log('Token establecido:', data.access_token);
-        console.log('Permisos establecidos:', data.permisos);
-
-        this.router.navigate(['/dashboard']); // <- IMPORTANTE: después de guardar
-      },
-      error: (err) => {
-        this.mensajeError = err.error?.Data?.[0]?.mensaje || 'Error desconocido';
-        this.mensajesError = [{ severity: 'error', summary: 'Error', detail: this.mensajeError }];
-      },
-    });
+  if (this.loginForm.invalid) {
+    return;
   }
+
+  this.authService.login(this.loginForm.value).subscribe({
+    next: (resp) => {
+      const data = resp.Data?.[0];
+      this.tokenService.setToken(data.access_token);
+      this.tokenService.setPermisos(data.permisos);
+
+      this.messageService.add({
+        severity: 'success',
+        detail: 'Bienvenido al sistema',
+        life: 3000
+      });
+
+      this.router.navigate(['/dashboard']);
+    },
+    error: (err) => {
+      const mensaje = err.error?.Data?.[0]?.mensaje || 'Error desconocido';
+      this.messageService.add({
+        severity: 'error',
+        detail: 'Error al iniciar sesión: ' + mensaje,
+        life: 5000
+      });
+    },
+  });
+}
 }

@@ -1,9 +1,10 @@
-<!-- login.componente.html -->
+<!-- login.component.html -->
+<p-toast></p-toast>
+
 <div class="login-container">
-  <div class="login-card">
+  <p-card class="login-card" styleClass="p-shadow-4">
     <div class="login-header">
-      <!--<img src="assets/logo-medico.png" alt="Logo Menchaca" />-->
-      <h2>Bienvenido a <span> *pordeterminar* </span></h2>
+      <h2>Bienvenido a <span>*pordeterminar*</span></h2>
       <p>Sistema de gestión médica</p>
     </div>
 
@@ -11,25 +12,46 @@
       <div class="form-group">
         <label for="correo">Correo electrónico</label>
         <input pInputText type="email" id="correo" formControlName="correo" placeholder="correo@empresa.com" />
+        <small *ngIf="loginForm.get('correo')?.invalid && loginForm.get('correo')?.touched" class="p-error">
+          Por favor ingrese un correo válido
+        </small>
       </div>
 
       <div class="form-group">
         <label for="password">Contraseña</label>
-        <input pInputText type="password" id="password" formControlName="password" placeholder="••••••••" />
+        <p-password 
+          id="password" 
+          formControlName="password" 
+          [feedback]="false" 
+          placeholder="••••••••"
+          [toggleMask]="true"
+          inputStyleClass="p-password-input">
+        </p-password>
+        <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="p-error">
+          La contraseña es requerida
+        </small>
       </div>
 
       <div class="form-group">
         <label for="codigo_totp">Código TOTP</label>
         <input pInputText type="text" id="codigo_totp" formControlName="codigo_totp" placeholder="469581" />
+        <small *ngIf="loginForm.get('codigo_totp')?.invalid && loginForm.get('codigo_totp')?.touched" class="p-error">
+          El código TOTP es requerido
+        </small>
       </div>
 
-      <p-messages [(value)]="mensajesError" *ngIf="mensajeError"></p-messages>
-
-      <button pButton type="submit" label="Ingresar" icon="pi pi-sign-in" class="btn-login" [disabled]="loginForm.invalid"></button>
+      <button 
+        pButton 
+        type="submit" 
+        label="Ingresar" 
+        icon="pi pi-sign-in" 
+        class="p-button-primary"
+        [disabled]="loginForm.invalid">
+      </button>
 
       <div class="register-link">
         <a routerLink="/register">¿No tienes cuenta? <strong>Regístrate</strong></a>
       </div>
     </form>
-  </div>
+  </p-card>
 </div>
