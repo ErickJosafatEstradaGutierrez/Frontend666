@@ -13,7 +13,8 @@
 Clona el repositorio:
 
 ```bash
-git clone https://github.com/SrArmstrong/proyectomenchaca_front
+git clone https://github.com/ErickJosafatEstradaGutierrez/Frontend666.git
+
 
 ```
 

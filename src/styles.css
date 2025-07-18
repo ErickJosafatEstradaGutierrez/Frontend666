@@ -1,11 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
 :root {
-  --color-primary: #3674B5;
-  --color-secondary: #A1E3F9;
-  --color-accent: #578FCA;
-  --color-background: #EAFFFA;
-  --color-text: #050315;
+  --color-primary: #1E3A5F;       /* Azul oscuro elegante */
+  --color-secondary: #335577;     /* Azul grisáceo */
+  --color-accent: #4A6B8A;        /* Azul acero */
+  --color-background: #121821;    /* Fondo muy oscuro, casi negro azulado */
+  --color-text: #000000;          /* Texto claro, gris suave */
+  --color-muted: #7A8A99;         /* Texto secundario */
+  --color-error: #E57373;         /* Rojo suave para importante */
+  --color-success: #81C784;       /* Verde suave para éxito */
 }
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
@@ -59,16 +62,16 @@ p {
 
 .small-text {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--color-muted);
 }
 
 .text-important {
-  color: #e74c3c;
+  color: var(--color-error);
   font-weight: bold;
 }
 
 .text-success {
-  color: #2ecc71;
+  color: var(--color-success);
   font-weight: bold;
 }
 
@@ -78,5 +81,5 @@ p {
 
 .table-text {
   font-size: 0.95rem;
-  color: #444;
+  color: var(--color-muted);
 }
